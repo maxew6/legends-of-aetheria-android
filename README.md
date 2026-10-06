@@ -2,7 +2,7 @@
 
 An Android wrapper for the **Legends of Aetheria** fantasy adventure. The game runs locally in a fullscreen landscape WebView and does not need a network connection while playing.
 
-**Current Android build:** version 1.2 (`versionCode` 3).
+**Current Android build:** version 1.3 (`versionCode` 4).
 
 ## The adventure
 
@@ -15,6 +15,12 @@ Travel through five hand-built regions, each with its own palette, terrain, land
 5. **The Fallen Castle** — confront Vyrmgrath, the Ancient Dragon.
 
 The main quest advances through story conversations, enemy-clear goals, the three crystals, and the mural. Optional adventures include Brannoch’s goblin-mark hunt and five Chronicle memory stones; finding every memory earns the Moon Pendant. Pip teaches Starfall after the crystals are gathered.
+
+## Gear, items, and loot
+
+The Adventurer’s Pack presents equipment and treasure as illustrated inventory icons inspired by the supplied hand-painted fantasy-item reference. Weapons, armor, shields, jewelry, helmets, gloves, belts, a satchel, and the Moon Spellbook have distinct equipment slots and affect attack, magic, defense, health, or mana. Better gear equips automatically when found; owned equipment can also be changed from the inventory.
+
+Enemies leave physical loot on the ground: goblins drop Moon-Iron Marks for Brannoch’s side quest, while other foes may drop potions, Ether Tonics, Ember Bombs, or rare gear. Walk up and interact to collect drops. Health and mana items are usable from the pack; the Ember Bomb deals area damage. Find the Moon Key in the forest to unlock a rare ruins chest, and collected Moon Crystals are tracked in the pack as well as the main quest.
 
 ## Controls
 
@@ -48,6 +54,7 @@ The debug APK is created at `app/build/outputs/apk/debug/app-debug.apk`. A copy 
 - `app/src/main/assets/index.html` — game logic, story, interactions, and controls
 - `app/src/main/assets/world.js` — distinct biome maps, routes, and environment landmarks
 - `app/src/main/assets/sprites.js` — animated pixel-art characters
+- `app/src/main/assets/items/` — bundled 256px WebP item illustrations plus SVG fallbacks
 - `app/src/main/java/com/aetheria/game/MainActivity.java` — native Android WebView shell
 - `app/src/main/AndroidManifest.xml` — launcher and landscape app configuration
 - `artifacts/LegendsOfAetheria.apk` — debug-signed Android build

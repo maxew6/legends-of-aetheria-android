@@ -14,6 +14,17 @@ button:hover{background:#2c3a6e}
 #bar{position:fixed;bottom:8px;left:0;right:0;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;pointer-events:none}
 #bar button{pointer-events:auto;min-width:46px;height:46px;padding:0 8px;border-radius:50%;background:#0d1530cc;margin:0}
 .it{display:flex;justify-content:space-between;text-align:left;border-bottom:1px solid #ffffff18;padding:2px 0}
+.item-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;text-align:left;margin:10px 0}
+.equip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px;margin:8px 0}
+.equip-slot,.loot-card{background:#302923;border:1px solid #65533e;border-radius:7px;padding:7px;color:#eee0c3}
+.equip-slot{display:flex;align-items:center;gap:7px;min-height:50px;font-size:12px;text-align:left}
+.loot-card{text-align:center;min-width:0}
+.loot-art{width:68px;height:68px;display:block;margin:0 auto 4px;border-radius:5px;object-fit:contain;background:#302923}
+.loot-name{font-weight:bold;font-size:13px;min-height:30px}
+.loot-meta{font-size:11px;color:#d4c4a5;min-height:27px}
+.loot-card button{font-size:12px;padding:5px 9px;margin:3px}
+.rarity-common{color:#c7bfad}.rarity-uncommon{color:#9ddb9a}.rarity-rare{color:#88c8fa}.rarity-epic{color:#d3a6ff}
+@media(max-width:480px){.item-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.loot-art{width:58px;height:58px}.card{padding:16px 14px}}
 </style></head><body>
 <canvas id="g"></canvas>
 <div id="bar" style="display:none">
@@ -36,22 +47,29 @@ function music(){if(S&&S.mode=='game'&&!S.dlg){const sc=S.combat?[220,261,311,29
 /* ---------- data ---------- */
 const Z=AetheriaWorld.zones;
 const EN={goblin:{h:30,s:75,d:7,c:'#6b9a3c',r:11,x:10,g:4},wolf:{h:26,s:125,d:6,c:'#8a8a98',r:12,x:9,g:3},skel:{h:45,s:65,d:10,c:'#e0dcc8',r:12,x:14,g:6},shade:{h:36,s:95,d:9,c:'#7a4fc8',r:12,x:16,g:5},knight:{h:100,s:55,d:16,c:'#5a6288',r:15,x:30,g:15},dragon:{h:800,s:0,d:0,c:'#b8321e',r:85,x:400,g:300}};
-const LOOT={sword1:{n:'Iron Sword',t:'sword',s:4},sword2:{n:'Ember Blade',t:'sword',s:8},shield1:{n:'Oak Shield',t:'shield',s:2},armor1:{n:'Watchman Mail',t:'armor',s:3},armor2:{n:'Dragonscale Vest',t:'armor',s:6},ring1:{n:'Ring of Leaves',t:'ring',s:4},art1:{n:'Moon Pendant',t:'artifact',s:6},staff1:{n:'Oak Staff',t:'staff',s:3}};
+const LOOT={
+sword1:{id:'iron-sword',n:'Iron Sword',t:'sword',s:4,icon:'iron-sword',rarity:'Common'},sword2:{id:'ember-blade',n:'Ember Blade',t:'sword',s:8,icon:'ember-blade',rarity:'Epic'},
+shield1:{id:'oak-shield',n:'Oak Shield',t:'shield',s:2,icon:'oak-shield',rarity:'Common'},armor1:{id:'watchman-mail',n:'Watchman Mail',t:'armor',s:3,icon:'watchman-mail',rarity:'Uncommon'},armor2:{id:'dragonscale-vest',n:'Dragonscale Vest',t:'armor',s:6,icon:'dragonscale-vest',rarity:'Epic'},
+ring1:{id:'ring-of-leaves',n:'Ring of Leaves',t:'ring',s:4,icon:'ring-of-leaves',rarity:'Rare'},art1:{id:'moon-pendant',n:'Moon Pendant',t:'artifact',s:6,icon:'moon-pendant',rarity:'Epic'},staff1:{id:'oak-staff',n:'Oak Staff',t:'staff',s:3,icon:'oak-staff',rarity:'Uncommon'},
+helm1:{id:'moonbone-helm',n:'Moonbone Helm',t:'helm',s:2,icon:'moonbone-helm',rarity:'Rare'},gloves1:{id:'stonegrip-gloves',n:'Stonegrip Gloves',t:'gloves',s:2,icon:'stonegrip-gloves',rarity:'Uncommon'},belt1:{id:'wayfarer-belt',n:"Wayfarer's Belt",t:'belt',s:1,icon:'wayfarer-belt',rarity:'Uncommon'},pack1:{id:'traveler-satchel',n:'Traveler Satchel',t:'pack',s:1,icon:'traveler-satchel',rarity:'Rare'},book1:{id:'moon-spellbook',n:'Moon Spellbook',t:'book',s:2,icon:'moon-spellbook',rarity:'Rare'},
+health:{id:'health-potion',n:'Heartglass Draught',t:'consumable',use:'heal',power:45,icon:'health-potion',rarity:'Common'},ether:{id:'ether-tonic',n:'Ether Tonic',t:'consumable',use:'mana',power:35,icon:'ether-tonic',rarity:'Common'},bomb:{id:'ember-bomb',n:'Ember Bomb',t:'consumable',use:'bomb',power:58,icon:'ember-bomb',rarity:'Rare'},
+crystal:{id:'moon-crystal',n:'Moon Crystal',t:'quest',icon:'moon-crystal',rarity:'Rare'},key1:{id:'moon-key',n:'Moon Key',t:'key',icon:'moon-key',rarity:'Rare'},mark:{id:'goblin-mark',n:'Moon-Iron Mark',t:'quest',icon:'goblin-mark',rarity:'Uncommon'}};
+const ITEM_SLOTS=['sword','staff','shield','armor','helm','gloves','belt','pack','ring','artifact','book'];
 const GR=[1,2,4,5];
 const IT=[
 [{t:'npc',k:'wiz',x:210,y:330},{t:'npc',k:'queen',x:480,y:270},{t:'npc',k:'smith',x:690,y:340},{t:'npc',k:'cap',x:830,y:440},{t:'chest',x:50,y:530,l:'sword1'},{t:'lore',k:'bell',x:135,y:365}],
-[{t:'npc',k:'guard',x:300,y:360},{t:'npc',k:'trav',x:620,y:490},{t:'shrine',x:890,y:235},{t:'chest',x:55,y:232,l:'shield1'},{t:'lore',k:'root',x:825,y:480}],
-[{t:'npc',k:'pip',x:120,y:330},{t:'cry',x:300,y:270},{t:'cry',x:560,y:500},{t:'cry',x:830,y:300},{t:'mural',x:480,y:235},{t:'chest',x:905,y:530,l:'art1'},{t:'lore',k:'seal',x:700,y:455}],
-[{t:'chest',x:70,y:530,l:'armor2',gold:60},{t:'shrine',x:480,y:530},{t:'lore',k:'ash',x:235,y:485}],
-[{t:'lore',k:'crown',x:480,y:475}]];
+[{t:'npc',k:'guard',x:300,y:360},{t:'npc',k:'trav',x:620,y:490},{t:'shrine',x:890,y:235},{t:'chest',x:55,y:232,l:'shield1'},{t:'lore',k:'root',x:825,y:480},{t:'chest',x:865,y:520,l:'key1'},{t:'chest',x:780,y:300,l:'gloves1'}],
+[{t:'npc',k:'pip',x:120,y:330},{t:'cry',x:300,y:270},{t:'cry',x:560,y:500},{t:'cry',x:830,y:300},{t:'mural',x:480,y:235},{t:'lockedChest',x:905,y:530,l:'art1'},{t:'lore',k:'seal',x:700,y:455}],
+[{t:'chest',x:70,y:530,l:'armor2',gold:60},{t:'shrine',x:480,y:530},{t:'lore',k:'ash',x:235,y:485},{t:'chest',x:875,y:520,l:'belt1'}],
+[{t:'lore',k:'crown',x:480,y:475},{t:'chest',x:865,y:520,l:'helm1'}]];
 const NP={
 wiz:{n:'Merlanth the Wizard',c:'#8b6cff',l:s=>s.st==0?['The stars have begun to vanish one by one. Something beneath the Fallen Castle is drinking their light.','Vyrmgrath, the old storm-dragon, is waking. His dreams poison the forest creatures and weaken the Moon Seal.','Take my Oak Staff. Find Sylwen in the forest, then follow the moon-crystal trail into the ruins.']:['The ley-lines grow brighter as the seal weakens. Keep the crystals close, and do not waste your mana.'],f:s=>{if(s.st==0){give(LOOT.staff1);s.st=1;toast('Main quest started: The Broken Moon Seal')}}},
 queen:{n:'Queen Elowen',c:'#ffd76a',l:s=>s.st<2?['My family has guarded the Moon Seal for nine generations. We mistook its silence for safety.','The forest was the first to hear the dragon stirring. Bring me proof that its heart still beats.']:s.st<5?['The moon-crystals were placed to bind Vyrmgrath, not to imprison the forest. Return them to the old seal.','The road east is open. When you reach the valley, watch the ground: the dragon marks its attacks before the fire arrives.']:['The castle bells have not rung since the seal fell. If you can hear them again, Aetheria still has a future.'],f:s=>{if(!s.done.q){s.done.q=1;s.p.gold+=50;toast('Queen’s grant: +50 gold')}}},
-smith:{n:'Brannoch the Blacksmith',c:'#ff9a4a',l:s=>s.sq==0?['The goblins stole my moon-iron from the forest road. Three of them carried the ingots east.','Bring me three goblin marks and I will forge the Ember Blade — a weapon made for a dragon’s scales.']:s.sq==1&&s.gk<3?['The trail is still warm. Three goblins, friend. ('+Math.min(s.gk,3)+'/3 marks)']:s.sq==1?['That is the last mark. The Ember Blade is yours; its edge will bite through a dragon’s armor.']:['Keep the blade dry and the hilt warm. A good sword remembers its maker.'],f:s=>{if(s.sq==0)s.sq=1;else if(s.sq==1&&s.gk>=3){s.sq=2;give(LOOT.sword2);xp(20)}}},
+smith:{n:'Brannoch the Blacksmith',c:'#ff9a4a',l:s=>s.sq==0?['The goblins stole my moon-iron from the forest road. Three of them carried the ingots east.','Bring me three goblin marks and I will forge the Ember Blade — a weapon made for a dragon’s scales.']:s.sq==1&&s.gk<3?['The trail is still warm. Three goblins, friend. ('+Math.min(s.gk,3)+'/3 marks)']:s.sq==1?['That is the last mark. The Ember Blade is yours; its edge will bite through a dragon’s armor.']:['Keep the blade dry and the hilt warm. A good sword remembers its maker.'],f:s=>{if(s.sq==0)s.sq=1;else if(s.sq==1&&s.gk>=3){s.sq=2;takeItem('goblin-mark',3);give(LOOT.sword2);xp(20)}}},
 cap:{n:'Ser Aldric, Knight Captain',c:'#9fb4ff',l:s=>['A clean bandage and a clear head win more battles than a brave speech.','Rest here, traveler. The eastern gate is watched, but I will open it when the forest path is safe.'],f:s=>{s.p.hp=MH();s.p.mp=MM();toast('Captain Aldric restores you')}} ,
 guard:{n:'Sylwen, Forest Guardian',c:'#6bffb0',l:s=>s.done.g?['The roots are quiet now. I can feel the Moon Seal answering from the ruins.']:['I am Sylwen, keeper of the old roots. The corruption is not evil by choice — the dragon’s fever is inside it.','Take my Ring of Leaves. It will soften the forest’s blows. If you find the bound merchant, cut him free.'],f:s=>{if(!s.done.g){s.done.g=1;give(LOOT.ring1);xp(15)}}},
-trav:{n:'Bound Merchant',c:'#d9b38c',l:s=>s.done.m?['The road is mine again. I will tell every traveler who freed me.']:['I was carrying lamp-oil to the ruins when the goblins tied me here.','Take my savings. The old stones are dangerous after dusk — look for blue lights and read every inscription.'],f:s=>{if(!s.done.m){s.done.m=1;s.p.gold+=80;xp(25);toast('Merchant rescued! +80 gold')}}},
-pip:{n:'Pip, Young Mage',c:'#ff8bd0',l:s=>s.star?['I can feel the seal holding. The dragon still has one weakness: the heart beneath its scales.']:s.st>=3?['Three moon-crystals, three memories: the Queen’s vow, the forest’s promise, and the dragon’s true name. Read the mural to see how they fit.','I have one spell left to teach you. Starfall can strike every nearby foe — save it for the valley.']:['I am mapping the old seal. Find the three moon-crystals first; the mural will not wake without them.','The skeletons guard the broken pieces. A quick dodge is safer than trading hits.'],f:s=>{if(s.st>=3&&!s.star){s.star=1;toast('Learned Starfall!')}}}};
+trav:{n:'Bound Merchant',c:'#d9b38c',l:s=>s.done.m?['The road is mine again. I will tell every traveler who freed me.']:['I was carrying lamp-oil to the ruins when the goblins tied me here.','Take my savings. The old stones are dangerous after dusk — look for blue lights and read every inscription.'],f:s=>{if(!s.done.m){s.done.m=1;s.p.gold+=80;give(LOOT.pack1);xp(25);toast('Merchant rescued! +80 gold and a Traveler Satchel')}}},
+pip:{n:'Pip, Young Mage',c:'#ff8bd0',l:s=>s.star?['I can feel the seal holding. The dragon still has one weakness: the heart beneath its scales.']:s.st>=3?['Three moon-crystals, three memories: the Queen’s vow, the forest’s promise, and the dragon’s true name. Read the mural to see how they fit.','I have one spell left to teach you. Starfall can strike every nearby foe — save it for the valley.']:['I am mapping the old seal. Find the three moon-crystals first; the mural will not wake without them.','The skeletons guard the broken pieces. A quick dodge is safer than trading hits.'],f:s=>{if(s.st>=3&&!s.star){s.star=1;give(LOOT.book1);toast('Learned Starfall and found the Moon Spellbook!')}}}};
 const LORE={
 bell:{n:'The Bell-Keeper’s Record',c:'#e8c46a',l:['The first Queen rang the silver bell when the Moon Seal was made.','Its final note was meant to wake the royal line if the seal ever weakened.']},
 root:{n:'The Rootheart Stone',c:'#8ecb76',l:['The forest remembers every footstep. It does not hate the lost — it waits for them to find the path home.','Vyrmgrath’s fire has scorched the roots, but the heartwood still carries moonlight.']},
@@ -63,13 +81,16 @@ const QT=s=>['Find Merlanth and learn why the stars are fading.','Cleanse the En
 const DEC=AetheriaWorld.makeDecorations(W,H);
 function bg(i){return AetheriaWorld.background(i,W,H)}
 const BG=[];
+const ITEM_IMAGE_CACHE={};
+function itemImage(name){if(!ITEM_IMAGE_CACHE[name]){const im=new Image();im.onerror=function(){if(!this.src.endsWith('.svg')){this.onerror=null;this.src='items/'+name+'.svg'}};im.src='items/'+name+'.webp';ITEM_IMAGE_CACHE[name]=im}return ITEM_IMAGE_CACHE[name]}
+function drawItemIcon(ctx,name,x,y,w,h){const im=itemImage(name);if(im.complete&&im.naturalWidth)ctx.drawImage(im,x,y,w,h)}
 /* ---------- state ---------- */
 let S=null,keys={},joy={on:0,dx:0,dy:0,cx:0,cy:0,id:null},last=0;
-const MH=()=>S.p.mh+(S.eq.ring?S.eq.ring.s*5:0),MM=()=>S.p.mm+(S.eq.artifact?S.eq.artifact.s*3:0);
-const ATK=()=>8+(S.eq.sword?S.eq.sword.s:0)+S.p.lv,MAG=()=>6+S.p.mag*3+(S.eq.staff?S.eq.staff.s*2:0),DEF=()=>S.p.def+(S.eq.shield?S.eq.shield.s:0)+(S.eq.armor?S.eq.armor.s:0);
+const MH=()=>S.p.mh+(S.eq.ring?S.eq.ring.s*5:0)+(S.eq.pack?S.eq.pack.s*12:0),MM=()=>S.p.mm+(S.eq.artifact?S.eq.artifact.s*3:0)+(S.eq.book?S.eq.book.s*2:0);
+const ATK=()=>8+(S.eq.sword?S.eq.sword.s:0)+(S.eq.gloves?S.eq.gloves.s:0)+S.p.lv,MAG=()=>6+S.p.mag*3+(S.eq.staff?S.eq.staff.s*2:0)+(S.eq.book?S.eq.book.s*2:0),DEF=()=>S.p.def+(S.eq.shield?S.eq.shield.s:0)+(S.eq.armor?S.eq.armor.s:0)+(S.eq.helm?S.eq.helm.s:0)+(S.eq.belt?S.eq.belt.s:0);
 function newGame(){stopControls();S={mode:'intro',t:0,z:0,st:0,gk:0,fk:0,vk:0,cr:0,sq:0,cl:{},op:{},done:{},discoveries:[],beat:0,shake:0,combat:0,star:0,hint:20,gt:0,
 p:{x:120,y:420,hp:100,mh:100,mp:60,mm:60,lv:1,xp:0,nx:40,gold:0,sp:0,mag:0,def:0,spd:0,fx:1,fy:0,cd:0,dcd:0,inv:0,dash:0,sw:0},
-inv:[],eq:{},es:[],pr:[],ep:[],fx:[],tel:[],dlg:null,toast:null,boss:null,end:0,ff:[],sh:{x:-300,on:0,n:25}};
+inv:[],eq:{},drops:[[],[],[],[],[]],es:[],pr:[],ep:[],fx:[],tel:[],dlg:null,toast:null,boss:null,end:0,ff:[],sh:{x:-300,on:0,n:25}};
 for(let i=0;i<30;i++)S.ff.push({x:rnd(0,W),y:rnd(220,540),a:rnd(0,7)});
 ov.style.display='none';bar.style.display='none';enter(0,120,420)}
 function enter(z,x,y){S.z=z;S.p.x=x;S.p.y=y;S.p.moving=false;S.es=[];S.pr=[];S.ep=[];S.tel=[];S.fx=[];S.boss=null;if(!BG[z])BG[z]=bg(z);
@@ -77,7 +98,19 @@ if(!S.cl[z]){Z[z].ft.forEach(f=>{for(let i=0;i<f[1];i++)S.es.push(mk(f[0],rnd(40
 if(z==4&&!S.done.boss){S.boss=mk('dragon',720,270);S.boss.a=0;S.es.push(S.boss);snd(70,2,'sawtooth',.15,.5);S.shake=1.2;toast('The Ancient Dragon awakens!')}}}
 function mk(t,x,y){const e=EN[t];return{t:t,x:x,y:y,hp:e.h,mh:e.h,cd:rnd(0,1),hit:0,ph:rnd(0,7)}}
 function toast(s){S.toast={s:s,l:3}}
-function give(it){S.inv.push(it);const cu=S.eq[it.t];if(!cu||cu.s<it.s)S.eq[it.t]=it;toast('Found '+it.n+' (+'+it.s+' '+it.t+')');snd(660,.4,'sine',.08,1.6)}
+function give(it,qty=1){
+if(['consumable','quest','key'].includes(it.t)){let q=S.inv.find(x=>x.id===it.id);if(q)q.qty=(q.qty||1)+qty;else S.inv.push({...it,qty})}
+else{const item={...it};S.inv.push(item);const cu=S.eq[item.t];if(!cu||cu.s<item.s)S.eq[item.t]=item}
+toast('Found '+it.n+(qty>1?' ×'+qty:'')+(it.s?' (+'+it.s+' '+it.t+')':''));snd(660,.4,'sine',.08,1.6)}
+function dropItem(it,x,y,qty=1){S.drops[S.z].push({it,x,y,qty,phase:rnd(0,7)})}
+function takeItem(id,qty=1){const i=S.inv.findIndex(x=>x.id===id);if(i<0)return false;const item=S.inv[i],n=item.qty||1;if(n>qty)item.qty=n-qty;else S.inv.splice(i,1);return true}
+function equipItem(i){const item=S.inv[i];if(!item||!ITEM_SLOTS.includes(item.t))return;S.eq[item.t]=item;toast(item.n+' equipped');drawInv()}
+function useItem(id){if(!S||S.mode!='inv')return;const item=S.inv.find(x=>x.id===id);if(!item||!item.use)return;const p=S.p;
+if(item.use==='heal'){if(p.hp>=MH())return toast('Health is already full');p.hp=Math.min(MH(),p.hp+item.power);spark(p.x,p.y,'#f27482',18,90)}
+if(item.use==='mana'){if(p.mp>=MM())return toast('Mana is already full');p.mp=Math.min(MM(),p.mp+item.power);spark(p.x,p.y,'#65d5ee',18,90)}
+if(item.use==='bomb'){const targets=S.es.filter(e=>dist(e,p)<145+EN[e.t].r);if(!targets.length)return toast('No enemies are close enough');targets.slice().forEach(e=>hurt(e,item.power,1));ring(p.x,p.y,'#ff8144',145);spark(p.x,p.y,'#ff8144',28,170)}
+takeItem(id);drawInv();toast(item.use==='heal'?'Health restored':item.use==='mana'?'Mana restored':'Ember Bomb detonated')}
+function collectDrop(d){const list=S.drops[S.z],i=list.indexOf(d);if(i<0)return;list.splice(i,1);give(d.it,d.qty);if(d.it.id==='goblin-mark'){S.gk+=d.qty;toast('Moon-Iron marks '+Math.min(S.gk,3)+'/3 collected')}}
 function xp(n){const p=S.p;p.xp+=n;while(p.xp>=p.nx){p.xp-=p.nx;p.lv++;p.nx=Math.round(p.nx*1.5);p.sp++;p.hp=MH();p.mp=MM();toast('Level '+p.lv+'! +1 skill point (press I)');snd(520,.6,'triangle',.1,2)}}
 /* ---------- combat ---------- */
 function near(r){let b=null,d=r;S.es.forEach(e=>{const q=dist(e,S.p);if(q<d){d=q;b=e}});return b}
@@ -92,9 +125,13 @@ if(n==4){S.es.forEach(e=>{if(dist(e,p)<150+EN[e.t].r)hurt(e,40+MAG()*2,1)});ring
 function hurt(e,d,kb){if(e.t=='dragon')d=Math.round(d*.8);e.hp-=d;e.hit=.15;if(kb&&e.t!='dragon'){const a=Math.atan2(e.y-S.p.y,e.x-S.p.x);e.x+=Math.cos(a)*18;e.y+=Math.sin(a)*18}
 S.fx.push({t:'txt',x:e.x,y:e.y-EN[e.t].r,s:d,l:.8});spark(e.x,e.y,EN[e.t].c,6,100);snd(160,.1,'square',.05,.5);if(e.hp<=0)die(e)}
 function die(e){const d=EN[e.t];S.es=S.es.filter(q=>q!=e);spark(e.x,e.y,d.c,30,200);xp(d.x);S.p.gold+=d.g;S.fx.push({t:'txt',x:e.x,y:e.y-20,s:'+'+d.g+'g',l:1,c:'#ffd76a'});
-if(e.t=='goblin')S.gk++;if(S.z==1)S.fk++;if(S.z==3)S.vk++;
+if(e.t=='goblin')dropItem(LOOT.mark,e.x,e.y);
+else if(e.t=='wolf'&&Math.random()<.24)dropItem(LOOT.health,e.x,e.y);
+else if((e.t=='skel'||e.t=='shade')&&Math.random()<.22)dropItem(Math.random()<.55?LOOT.ether:LOOT.bomb,e.x,e.y);
+if(e.t=='knight'&&Math.random()<.2)dropItem(LOOT.helm1,e.x,e.y);
+if(S.z==1)S.fk++;if(S.z==3)S.vk++;
 if(S.st==1&&S.fk>=6){S.st=2;toast('The ancient path to the ruins opens!')}if(S.st==4&&S.vk>=7){S.st=5;toast('The road to the Fallen Castle opens!')}
-if(e.t=='dragon'){S.done.boss=1;S.st=6;S.shake=2;S.ep=[];S.tel=[];snd(60,2.5,'sawtooth',.2,.3);setTimeout(win,2600);for(let i=0;i<5;i++)setTimeout(()=>spark(e.x+rnd(-70,70),e.y+rnd(-40,40),'#ffb040',40,260),i*300)}
+if(e.t=='dragon'){S.done.boss=1;S.st=6;S.shake=2;S.ep=[];S.tel=[];give(LOOT.art1);snd(60,2.5,'sawtooth',.2,.3);setTimeout(win,2600);for(let i=0;i<5;i++)setTimeout(()=>spark(e.x+rnd(-70,70),e.y+rnd(-40,40),'#ffb040',40,260),i*300)}
 if(!S.es.length&&e.t!='dragon')S.cl[S.z]=1}
 function dmgP(d){const p=S.p;if(p.inv>0||S.mode!='game')return;p.hp-=Math.max(1,d-DEF());p.inv=.6;S.shake=.25;snd(110,.2,'sawtooth',.08,.5);spark(p.x,p.y,'#ff4a4a',10,120);if(p.hp<=0){S.mode='dead';S.combat=0;stopControls();bar.style.display='none';ov.style.display='flex';ov.innerHTML='<div class="card"><h2>You have fallen</h2><p>Aetheria is not lost yet. Rise again.</p><button class="big" onclick="respawn()">Rise Again</button><button onclick="newGame();intro()">Restart</button></div>'}}
 function respawn(){const p=S.p;p.hp=MH()/2;p.mp=MM();p.inv=2;S.mode='game';ov.style.display='none';bar.style.display='flex';S.cl[S.z]=S.z==4?0:S.cl[S.z];enter(S.z==4?3:S.z,60,420)}
@@ -107,7 +144,9 @@ if(!S||S.mode!='game')return;
 if(S.dlg){talkNext();return}
 const p=S.p;let b=null,d=60;
 (IT[S.z]||[]).forEach((it,i)=>{it.i=i;const q=dist(it,p);if(q<d&&!S.op[S.z+':'+i]){d=q;b=it}});
+(S.drops[S.z]||[]).forEach(q=>{const n=dist(q,p);if(n<d){d=n;b={t:'drop',drop:q,x:q.x,y:q.y}}});
 if(!b)return;
+if(b.t=='drop'){collectDrop(b.drop);return}
 const key=S.z+':'+b.i;
 if(b.t=='npc'){const n=NP[b.k];stopControls();S.dlg={n:n.n,c:n.c,l:n.l(S),i:0,f:n.f};return}
 if(b.t=='lore'){
@@ -115,9 +154,13 @@ if(b.t=='lore'){
   if(first){S.discoveries.push(b.k);xp(8);if(S.discoveries.length===5){give(LOOT.art1);toast('Chronicle complete — Moon Pendant found')}}
   stopControls();S.dlg={n:entry.n,c:entry.c,l:entry.l,i:0,f:null};return
 }
+if(b.t=='lockedChest'){
+  if(!S.inv.some(i=>i.id==='moon-key'))return toast('The chest is locked. Find the Moon Key.');
+  takeItem('moon-key');S.op[key]=1;if(b.l)give(LOOT[b.l]);toast('Moon Key turns — rare treasure found!');spark(b.x,b.y,'#ffd76a',24,150);return
+}
 if(b.t=='chest'){S.op[key]=1;if(b.l)give(LOOT[b.l]);if(b.gold){S.p.gold+=b.gold;toast('+'+b.gold+' gold')}xp(15);spark(b.x,b.y,'#ffd76a',20,120)}
 if(b.t=='shrine'){S.op[key]=1;p.hp=MH();p.mp=MM();xp(30);toast('A hidden shrine restores you (+30 xp)');ring(b.x,b.y,'#7dffb0',120)}
-if(b.t=='cry'){S.op[key]=1;S.cr++;toast('Moon crystal '+S.cr+'/3');snd(880,.5,'sine',.08,1.5);spark(b.x,b.y,'#9ad0ff',25,140);if(S.cr>=3&&S.st<3){S.st=3;toast('Crystals gathered — study the mural')}}
+if(b.t=='cry'){S.op[key]=1;S.cr++;give(LOOT.crystal);toast('Moon crystal '+S.cr+'/3');snd(880,.5,'sine',.08,1.5);spark(b.x,b.y,'#9ad0ff',25,140);if(S.cr>=3&&S.st<3){S.st=3;toast('Crystals gathered — study the mural')}}
 if(b.t=='mural'){if(S.st<3)return toast('The mural is dark. Gather the crystals first.');stopControls();S.dlg={n:'The Moon-Seal Mural',c:'#c8a6ff',l:['A dragon of storm and flame swallowed the sky.','The First Queen did not bind it with chains. She bound it with three promises remembered by her people.','Carry the crystals to the Fallen Castle. Speak Vyrmgrath’s name, then renew the seal.'],i:0,f:s=>{if(s.st==3){s.st=4;toast('The eastern pass opens: Dragon Valley')}}}}
 }
 function talkNext(){const d=S.dlg;d.i++;snd(400,.05,'sine',.04,1);if(d.i>=d.l.length){S.dlg=null;if(d.f)d.f(S)}}
@@ -150,14 +193,14 @@ if(f>1){e.c3=(e.c3||0)+dt;if(e.c3>12){e.c3=0;S.es.push(mk('shade',e.x-100,e.y+80
 function glow(x,y,r,col,a){const q=c.createRadialGradient(x,y,0,x,y,r);q.addColorStop(0,col+Math.round(a*255).toString(16).padStart(2,'0'));q.addColorStop(1,col+'00');c.fillStyle=q;c.fillRect(x-r,y-r,r*2,r*2)}
 function drawScene(){const z=S.z,p=S.p,t=S.t;c.drawImage(BG[z],0,0);
 if(z<2)for(let i=0;i<4;i++){const bx=(t*30+i*300)%1200-120;c.strokeStyle='#cfd8ff88';c.beginPath();c.moveTo(bx,60+i*18);c.lineTo(bx+6,66+i*18);c.lineTo(bx+12,60+i*18);c.stroke()}
-const L=[];DEC[z].forEach(d=>L.push({y:d.y,f:()=>drawDec(d)}));(IT[z]||[]).forEach((it,i)=>{if(!S.op[z+':'+i]||it.t=='npc')L.push({y:it.y,f:()=>drawIt(it,S.op[z+':'+i])})});
+const L=[];DEC[z].forEach(d=>L.push({y:d.y,f:()=>drawDec(d)}));(IT[z]||[]).forEach((it,i)=>{if(!S.op[z+':'+i]||it.t=='npc')L.push({y:it.y,f:()=>drawIt(it,S.op[z+':'+i])})});(S.drops[z]||[]).forEach(d=>L.push({y:d.y-20,f:()=>drawLootDrop(d)}));
 S.es.forEach(e=>L.push({y:e.y,f:()=>drawEn(e)}));L.push({y:p.y,f:drawP});L.sort((a,b)=>a.y-b.y);L.forEach(o=>o.f());
 if(z<4&&S.st<GR[z]){c.fillStyle='#b8321e55';c.fillRect(948,215,12,330)}else if(z<4){glow(954,380,90,'#ffd76a',.35)}
 // lighting
 c.fillStyle='rgba(6,10,36,.28)';c.fillRect(0,0,W,H);c.globalCompositeOperation='lighter';
 DEC[z].forEach(d=>{if(d.k=='torch'||d.k=='brazier')glow(d.x,d.y-38,90+Math.sin(t*9+d.x)*8,d.k=='brazier'?'#ff6938':'#ffa040',.4);if(d.k=='vent')glow(d.x,d.y-16,54,'#ff582c',.28+Math.sin(t*6+d.x)*.12)});
 glow(p.x,p.y,110,'#8fb0ff',.18);S.pr.forEach(q=>glow(q.x,q.y,50,q.k==1?'#8a6cff':'#ff8a3a',.7));S.ep.forEach(q=>glow(q.x,q.y,40,'#ff6a1a',.6));
-(IT[z]||[]).forEach((it,i)=>{if(!S.op[z+':'+i]){if(it.t=='cry')glow(it.x,it.y,60,'#7ab8ff',.6+Math.sin(t*3)*.2);if(it.t=='shrine')glow(it.x,it.y,70,'#7dffb0',.4);if(it.t=='chest')glow(it.x,it.y,26,'#ffd76a',.15+Math.sin(t*4)*.1);if(it.t=='lore')glow(it.x,it.y-8,34,'#76caff',.2+Math.sin(t*2)*.08)}});
+(IT[z]||[]).forEach((it,i)=>{if(!S.op[z+':'+i]){if(it.t=='cry')glow(it.x,it.y,60,'#7ab8ff',.6+Math.sin(t*3)*.2);if(it.t=='shrine')glow(it.x,it.y,70,'#7dffb0',.4);if(it.t=='chest'||it.t=='lockedChest')glow(it.x,it.y,26,'#ffd76a',.15+Math.sin(t*4)*.1);if(it.t=='lore')glow(it.x,it.y-8,34,'#76caff',.2+Math.sin(t*2)*.08)}});
 if(z<3)S.ff.forEach(f=>{f.a+=.01;glow(f.x+Math.sin(f.a*2)*20,f.y+Math.cos(f.a*3)*12,10,'#d8ff7a',.5+Math.sin(f.a*5)*.4)});
 if(z==3)glow(140,60,90,'#ff5a1f',.25);
 c.globalCompositeOperation='source-over';
@@ -171,11 +214,12 @@ function drawDec(d){AetheriaWorld.drawDecoration(c,d,S.t)}
 function drawIt(it,used){const t=S.t;c.save();c.translate(it.x,it.y);
 if(it.t=='npc'){const n=NP[it.k];c.restore();PixelCharacters.drawNpc(c,it,S,n);if(dist(it,S.p)<60&&!used){c.fillStyle='#ffd76a';c.font='bold 14px Georgia';c.textAlign='center';c.fillText('[E]',it.x,it.y-80)}return}
 if(it.t=='lore'){c.fillStyle='#171a28';c.fillRect(-15,-26,30,28);c.fillStyle='#595b6d';c.fillRect(-12,-29,24,28);c.fillStyle='#a2a2a7';c.fillRect(-12,-29,24,5);c.fillStyle='#26283b';c.fillRect(-7,-18,14,12);c.fillStyle='#8cc9e0';c.fillRect(-2,-16,4,8);c.fillStyle='#f2d478';c.fillRect(-5,-8,10,2)}
-if(it.t=='chest'){c.fillStyle='#000a';c.fillRect(-14,2,28,5);c.fillStyle='#7a4a1c';c.fillRect(-13,-14,26,16);c.fillStyle='#e8c46a';c.fillRect(-13,-8,26,3)}
-if(it.t=='cry'){c.fillStyle='#8ac6ff';c.beginPath();c.moveTo(0,-30-Math.sin(t*3)*3);c.lineTo(9,-12);c.lineTo(0,2);c.lineTo(-9,-12);c.fill()}
+if(it.t=='chest'||it.t=='lockedChest'){c.fillStyle='#000a';c.fillRect(-14,2,28,5);c.fillStyle='#7a4a1c';c.fillRect(-13,-14,26,16);c.fillStyle='#e8c46a';c.fillRect(-13,-8,26,3);if(it.t=='lockedChest'){c.fillStyle='#d9c08a';c.fillRect(-4,-9,8,10);c.strokeStyle='#2a211b';c.lineWidth=2;c.beginPath();c.arc(0,-10,4,Math.PI,0);c.stroke()}}
+if(it.t=='cry'){drawItemIcon(c,'moon-crystal',-20,-50,40,40)}
 if(it.t=='shrine'){c.fillStyle='#6a6a7a';c.fillRect(-12,-24,24,26);c.fillStyle='#7dffb0';c.beginPath();c.arc(0,-32,7,0,7);c.fill()}
 if(it.t=='mural'){c.fillStyle='#2a2438';c.fillRect(-50,-64,100,66);c.strokeStyle='#e8c46a';c.lineWidth=3;c.strokeRect(-50,-64,100,66);c.fillStyle='#c0402a';c.beginPath();c.moveTo(-30,-20);c.lineTo(-5,-52);c.lineTo(10,-30);c.lineTo(35,-46);c.lineTo(20,-16);c.fill()}
 if(dist(it,S.p)<60&&!used){c.fillStyle='#ffd76a';c.font='bold 14px Georgia';c.textAlign='center';c.fillText('[E]',0,it.t=='lore'?-36:-78)}c.restore()}
+function drawLootDrop(d){const bob=Math.sin(S.t*4+d.phase)*3;c.save();glow(d.x,d.y-22,30,d.it.t=='quest'?'#79cfff':'#ffcc65',.28);drawItemIcon(c,d.it.icon,d.x-18,d.y-44+bob,36,36);if(dist(d,S.p)<60){c.fillStyle='#ffe08a';c.font='bold 12px Georgia';c.textAlign='center';c.fillText('[E] '+d.it.n,d.x,d.y-48+bob)}c.restore()}
 function drawEn(e){PixelCharacters.drawEnemy(c,S,e,EN[e.t])}
 function drawP(){PixelCharacters.drawHero(c,S)}
 function hud(){const p=S.p;c.textAlign='left';c.font='14px Georgia';
@@ -210,7 +254,10 @@ function win(){S.mode='end';stopControls();bar.style.display='none';ov.style.dis
 function pause(){if(!S||S.mode!='game')return;stopControls();S.mode='pause';bar.style.display='none';ov.style.display='flex';ov.innerHTML='<div class="card"><h2>Paused</h2><p>'+QT(S)+'</p><button class="big" onclick="resume()">Resume</button><button onclick="newGame()">Restart</button><button onclick="menu()">Main menu</button></div>'}
 function resume(){if(!S)return;stopControls();S.mode='game';ov.style.display='none';bar.style.display='flex'}
 function inv(){if(!S)return;if(S.mode=='inv'){resume();return}if(S.mode!='game')return;stopControls();S.mode='inv';bar.style.display='none';ov.style.display='flex';drawInv()}
-function drawInv(){const p=S.p,e=S.eq;ov.innerHTML='<div class="card" style="width:min(520px,92vw)"><h2>Adventurer — Level '+p.lv+'</h2><p>ATK '+ATK()+' · MAG '+MAG()+' · DEF '+DEF()+' · HP '+MH()+' · Mana '+MM()+' · Gold '+p.gold+'</p><h2 style="font-size:16px">Equipped</h2>'+(['sword','staff','shield','armor','ring','artifact'].map(k=>'<div class="it"><span>'+k+'</span><span>'+(e[k]?e[k].n+' (+'+e[k].s+')':'—')+'</span></div>').join(''))+'<h2 style="font-size:16px;margin-top:10px">Skill points: '+p.sp+'</h2>'+[['mh','Health +20'],['mm','Mana +15'],['mag','Magic +3'],['def','Defense +1'],['spd','Speed']].map(u=>'<button '+(p.sp?'':'disabled')+' onclick="up(\''+u[0]+'\')">'+u[1]+'</button>').join('')+'<p style="font-size:13px">Bag: '+(S.inv.map(i=>i.n).join(', ')||'empty')+'</p><button onclick="worldMap()">World Map (M)</button><button onclick="journal()">Chronicle (J)</button><button class="big" onclick="resume()">Close (Esc)</button></div>'}
+function drawInv(){const p=S.p,e=S.eq,slots=['sword','staff','shield','armor','helm','gloves','belt','pack','ring','artifact','book'];
+const equipped=slots.map(k=>{const it=e[k];return '<div class="equip-slot">'+(it?'<img class="loot-art" style="width:42px;height:42px;margin:0" src="items/'+it.icon+'.webp" onerror="this.onerror=null;this.src=\'items/'+it.icon+'.svg\'">':'<span style="font-size:24px">—</span>')+'<span><b>'+k[0].toUpperCase()+k.slice(1)+'</b><br>'+(it?it.n:'Empty')+'</span></div>'}).join('');
+const cards=S.inv.map((it,i)=>{const qty=it.qty||1,rar=(it.rarity||'Common').toLowerCase(),meta=it.use?(it.use==='heal'?'Restores '+it.power+' HP':it.use==='mana'?'Restores '+it.power+' Mana':'Deals '+it.power+' damage nearby'):ITEM_SLOTS.includes(it.t)?'+'+it.s+' '+it.t:'Quest treasure';const action=it.use?'<button onclick="useItem(\''+it.id+'\')">Use ×'+qty+'</button>':ITEM_SLOTS.includes(it.t)?'<button onclick="equipItem('+i+')">'+(e[it.t]===it?'Equipped':'Equip')+'</button>':'<small>Keep safe · ×'+qty+'</small>';return '<div class="loot-card"><img class="loot-art" alt="" src="items/'+it.icon+'.webp" onerror="this.onerror=null;this.src=\'items/'+it.icon+'.svg\'"><div class="loot-name">'+it.n+'</div><div class="loot-meta rarity-'+rar+'">'+it.rarity+' · '+meta+'</div>'+action+'</div>'}).join('')||'<p>Your pack is empty. Search chests and collect the glowing loot dropped by enemies.</p>';
+ov.innerHTML='<div class="card" style="width:min(720px,96vw);max-height:92vh"><h2>Adventurer’s Pack — Level '+p.lv+'</h2><p>ATK '+ATK()+' · MAG '+MAG()+' · DEF '+DEF()+' · HP '+MH()+' · Mana '+MM()+' · Gold '+p.gold+'</p><h2 style="font-size:16px">Equipped Gear</h2><div class="equip-grid">'+equipped+'</div><h2 style="font-size:16px;margin-top:12px">Items & Loot ('+S.inv.reduce((n,x)=>n+(x.qty||1),0)+')</h2><div class="item-grid">'+cards+'</div><h2 style="font-size:16px">Skill points: '+p.sp+'</h2>'+[['mh','Health +20'],['mm','Mana +15'],['mag','Magic +3'],['def','Defense +1'],['spd','Speed']].map(u=>'<button '+(p.sp?'':'disabled')+' onclick="up(\''+u[0]+'\')">'+u[1]+'</button>').join('')+'<p><button onclick="worldMap()">World Map (M)</button><button onclick="journal()">Chronicle (J)</button><button class="big" onclick="resume()">Close (Esc)</button></p></div>'}
 function worldMap(){if(!S)return;if(S.mode=='map'){resume();return}if(S.mode!='game'&&S.mode!='inv')return;stopControls();S.mode='map';bar.style.display='none';ov.style.display='flex';const req=[0,1,2,4,5];const rows=Z.map((z,i)=>{const open=i===0||S.st>=req[i],current=i===S.z,done=!!S.cl[i]||(i===0&&S.st>0)||(i===4&&S.done.boss),state=current?'YOU ARE HERE':done?'CLEARED':open?'OPEN':'SEALED';const color=current?'#ffe08a':done?'#83d7a4':open?'#bac9ff':'#8a8792';return '<div class="it" style="padding:7px 2px;color:'+color+'"><b>'+('0'+(i+1)).slice(-2)+' · '+z.n+'</b><span>'+state+'</span></div>'}).join('');ov.innerHTML='<div class="card" style="width:min(540px,92vw)"><h2>Roads of Aetheria</h2><p>'+QT(S)+'</p>'+rows+'<p style="font-size:13px">The eastern road opens as the main quest advances. Explore each region for its Chronicle stone.</p><button onclick="journal()">Chronicle</button><button class="big" onclick="resume()">Return to adventure</button></div>'}
 function journal(){if(!S)return;if(!['game','inv','map','journal'].includes(S.mode))return;if(S.mode=='journal'){resume();return}stopControls();S.mode='journal';bar.style.display='none';ov.style.display='flex';const found=S.discoveries||[];const entries=Object.keys(LORE).map(k=>'<div class="it"><span>'+LORE[k].n+'</span><span>'+(found.includes(k)?'REMEMBERED':'UNDISCOVERED')+'</span></div>').join('');ov.innerHTML='<div class="card" style="width:min(540px,92vw)"><h2>Chronicle of the Moon Seal</h2><p><b>Current chapter:</b> '+QT(S)+'</p>'+entries+'<p>Memories found: '+found.length+'/5. Discover all five to recover the Moon Pendant.</p><button onclick="worldMap()">World Map</button><button class="big" onclick="resume()">Return to adventure</button></div>'}
 function up(k){const p=S.p;if(!p.sp)return;p.sp--;if(k=='mh'){p.mh+=20;p.hp+=20}else if(k=='mm')p.mm+=15;else p[k]++;drawInv()}
