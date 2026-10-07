@@ -2,7 +2,7 @@
 
 An Android wrapper for the **Legends of Aetheria** fantasy adventure. The game runs locally in a fullscreen landscape WebView and does not need a network connection while playing.
 
-**Current Android build:** version 1.3 (`versionCode` 4).
+**Current Android build:** version 1.4 (`versionCode` 5).
 
 ## The adventure
 
@@ -16,6 +16,8 @@ Travel through five hand-built regions, each with its own palette, terrain, land
 
 The main quest advances through story conversations, enemy-clear goals, the three crystals, and the mural. Optional adventures include Brannoch’s goblin-mark hunt and five Chronicle memory stones; finding every memory earns the Moon Pendant. Pip teaches Starfall after the crystals are gathered.
 
+Each region is now a wide, scrollable world with a camera-follow view, parallax night sky, on-screen scenery culling, persistent per-zone fog of war, and a discoverable secret. The gold-rimmed minimap and full map show explored terrain, objectives, gates, NPCs, treasure, shrines, enemies, and the dragon. The original story text, quests, enemy roster, character art, and dragon encounter are preserved.
+
 ## Gear, items, and loot
 
 The Adventurer’s Pack presents equipment and treasure as illustrated inventory icons inspired by the supplied hand-painted fantasy-item reference. Weapons, armor, shields, jewelry, helmets, gloves, belts, a satchel, and the Moon Spellbook have distinct equipment slots and affect attack, magic, defense, health, or mana. Better gear equips automatically when found; owned equipment can also be changed from the inventory.
@@ -24,7 +26,7 @@ Enemies leave physical loot on the ground: goblins drop Moon-Iron Marks for Bran
 
 ## Controls
 
-**Mobile:** drag on the **left half** of the playfield to move; tap the **right half** to attack. The on-screen buttons provide attack, dodge, Arcane Bolt, Fire, Heal, Starfall, interaction, world map, inventory, and pause.
+**Mobile (landscape):** use the floating left joystick for analog movement; hold the sword to repeat attacks. Tap a skill to auto-target, or drag/release to aim; dragging back onto its button cancels. The on-screen buttons provide dodge, Arcane Bolt, Fire, Heal, Starfall, contextual interaction, inventory, pause, settings, and the minimap. The minimap opens the full five-region map; tap the map or press `Esc` to return. Controls include cooldown, mana, lock, haptic, and safe-area feedback.
 
 **Keyboard / desktop:**
 
@@ -37,7 +39,7 @@ Enemies leave physical loot on the ground: goblins drop Moon-Iron Marks for Bran
 - `M` — world map · `J` — Chronicle
 - `Esc` — finish dialogue safely, close a panel, pause, or resume
 
-The world map shows the five regions and which routes are open; it is a guide, not a fast-travel menu. The Chronicle tracks discovered memories and the current chapter.
+The world map shows the five regions and which routes are open; it is a guide, not a fast-travel menu. The minimap is clickable on desktop and mobile (`M` also opens it on desktop). The Chronicle tracks discovered memories and the current chapter. The desktop keyboard bindings remain available alongside the mobile HUD.
 
 ## Build
 
@@ -51,8 +53,8 @@ The debug APK is created at `app/build/outputs/apk/debug/app-debug.apk`. A copy 
 
 ## Project layout
 
-- `app/src/main/assets/index.html` — game logic, story, interactions, and controls
-- `app/src/main/assets/world.js` — distinct biome maps, routes, and environment landmarks
+- `app/src/main/assets/index.html` — game logic, story, interactions, controls, camera, minimap, and UI sections
+- `app/src/main/assets/world.js` — distinct biome maps, routes, parallax layers, and environment landmarks
 - `app/src/main/assets/sprites.js` — animated pixel-art characters
 - `app/src/main/assets/items/` — bundled 256px WebP item illustrations plus SVG fallbacks
 - `app/src/main/java/com/aetheria/game/MainActivity.java` — native Android WebView shell

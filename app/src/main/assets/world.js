@@ -41,17 +41,17 @@
     return function () { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
   }
 
-  function pathY(zone, x) {
-    const t = x / 960;
-    if (zone === 0) return 390 + Math.sin(t * Math.PI * 1.4) * 13;
-    if (zone === 1) return 435 - Math.sin(t * Math.PI * 2.2) * 48 + Math.sin(t * Math.PI * 4) * 12;
-    if (zone === 2) return 425 - Math.sin(t * Math.PI * 1.6) * 40 + Math.sin(t * Math.PI * 3.5) * 18;
-    if (zone === 3) return 410 + Math.sin(t * Math.PI * 2.3) * 36 + Math.sin(t * Math.PI * 4.5) * 12;
-    return 415 + Math.sin(t * Math.PI * 1.2) * 10;
+  function pathY(zone, x, worldWidth = 960, worldHeight = 760) {
+    const t = x / worldWidth, base = worldHeight * .61;
+    if (zone === 0) return base + Math.sin(t * Math.PI * 3.2) * 20;
+    if (zone === 1) return base - Math.sin(t * Math.PI * 5.3) * 54 + Math.sin(t * Math.PI * 10) * 13;
+    if (zone === 2) return base - Math.sin(t * Math.PI * 3.8) * 46 + Math.sin(t * Math.PI * 8.5) * 18;
+    if (zone === 3) return base + Math.sin(t * Math.PI * 5.5) * 40 + Math.sin(t * Math.PI * 11) * 14;
+    return base + Math.sin(t * Math.PI * 3.1) * 16;
   }
 
   function drawPath(ctx, zone, W) {
-    const z=zones[zone], yAt=x=>pathY(zone,x);
+    const z=zones[zone], yAt=x=>pathY(zone,x,W,760);
     function stroke(color,width,offset) {
       ctx.beginPath();
       for (let x=-40;x<=W+40;x+=14) { const y=yAt(x)+offset; if (x===-40) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
@@ -124,7 +124,44 @@
     return cnv;
   }
 
-  function makeDecorations() { return decor.map(list=>list.map(d=>Object.assign({},d))); }
+  function makeDecorations(worldW = 960, worldH = 560) {
+    return decor.map((list, zone) => {
+      const out = [], sections = Math.ceil(worldW / 960);
+      for (let section = 0; section < sections; section++) {
+        list.forEach((d, index) => {
+          const x = d.x + section * 960;
+          if (x >= worldW - 24) return;
+          const drift = section ? ((index + section + zone) % 2 ? 24 : -18) : 0;
+          out.push(Object.assign({}, d, {x, y:Math.max(224,Math.min(worldH-26,d.y+drift))}));
+        });
+      }
+      return out;
+    });
+  }
+
+  function drawParallax(ctx, zone, cameraX, cameraY, viewW, viewH, worldW, t) {
+    const z=zones[zone], horizon=Math.max(26,210-cameraY), sky=ctx.createLinearGradient(0,0,0,horizon);
+    sky.addColorStop(0,z.a[0]);sky.addColorStop(1,z.a[1]);ctx.save();ctx.fillStyle=sky;ctx.fillRect(0,0,viewW,horizon+2);
+    const rng=rand(z.sd*271), starOffset=cameraX*.075;
+    for(let i=0;i<100;i++){
+      const wx=rng()*worldW, x=wx-starOffset;
+      if(x<0||x>viewW)continue;
+      ctx.globalAlpha=.22+((i*17)%70)/100;ctx.fillStyle=zone===3?'#ffd18a':'#e6e7ff';ctx.fillRect(x,8+rng()*(horizon*.58),1+(i%2),1+(i%2));
+    }
+    ctx.globalAlpha=1;
+    for(let m=0;m<3;m++){
+      const par=cameraX*(m===0?.17:.34), base=horizon-(m===0?10:0), seed=zone*19+m*31;
+      ctx.beginPath();ctx.moveTo(0,horizon+2);
+      for(let x=-90;x<=viewW+90;x+=55){const wx=x+par, wave=Math.sin((wx+seed*23)/(110+m*35))*18+Math.sin((wx-seed*11)/(47+m*18))*9;ctx.lineTo(x,base-24-m*23-wave)}
+      ctx.lineTo(viewW+90,horizon+2);ctx.closePath();ctx.fillStyle=['rgba(12,18,39,.66)','rgba(10,24,35,.68)','rgba(7,14,28,.72)'][m];ctx.fill();
+    }
+    const moonX=785-cameraX*.12, moonY=(zone===3?75:68)-cameraY*.08;
+    if(moonX>-60&&moonX<viewW+60){ctx.fillStyle=zone===3?'#ffb153':'#e8e4d1';ctx.shadowColor=zone===3?'#ff5525':'#cbd6ff';ctx.shadowBlur=25;ctx.beginPath();ctx.arc(moonX,moonY,zone===3?22:25,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0}
+    ctx.globalAlpha=1;ctx.restore();
+    ctx.save();ctx.globalAlpha=.12;
+    for(let i=0;i<3;i++){const x=((t*12*(i+1)+i*400-cameraX*.55)%(viewW+500))-250,y=300+i*72,g=ctx.createRadialGradient(x,y,0,x,y,245);g.addColorStop(0,'rgba(205,218,240,.7)');g.addColorStop(1,'rgba(205,218,240,0)');ctx.fillStyle=g;ctx.fillRect(0,y-90,viewW,180)}
+    ctx.restore();
+  }
 
   function drawDecoration(c,d,t) {
     c.save();c.translate(d.x,d.y);
@@ -166,5 +203,5 @@
     c.restore();
   }
 
-  root.AetheriaWorld = { zones, makeDecorations, background, drawDecoration, pathY };
+  root.AetheriaWorld = { zones, makeDecorations, background, drawDecoration, drawParallax, pathY };
 })(window);

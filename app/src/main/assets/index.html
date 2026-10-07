@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Legends of Aetheria</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover"><title>Legends of Aetheria</title>
 <style>
 :root{--gold:#e8c46a;--ink:#070b18;--em:#1f6b4f;--par:#f1e4bd}
 html,body{margin:0;height:100%;background:#03060f;color:var(--par);font-family:Georgia,'Palatino Linotype',serif;overflow:hidden;touch-action:none;user-select:none}
@@ -25,8 +25,64 @@ button:hover{background:#2c3a6e}
 .loot-card button{font-size:12px;padding:5px 9px;margin:3px}
 .rarity-common{color:#c7bfad}.rarity-uncommon{color:#9ddb9a}.rarity-rare{color:#88c8fa}.rarity-epic{color:#d3a6ff}
 @media(max-width:480px){.item-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.loot-art{width:58px;height:58px}.card{padding:16px 14px}}
+
+#stage{position:absolute;overflow:hidden;touch-action:none;isolation:isolate;background:#03060f}
+#g{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+#touch-ui{display:none;position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:4;font-family:Georgia,'Palatino Linotype',serif;--safe-top:env(safe-area-inset-top,0px);--safe-right:env(safe-area-inset-right,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--safe-left:env(safe-area-inset-left,0px)}
+body.is-touch #bar{display:none!important}body.is-touch #touch-ui{display:block}
+.touch-button,.mini-button{position:absolute;pointer-events:auto;touch-action:none;-webkit-tap-highlight-color:transparent;user-select:none;display:flex;align-items:center;justify-content:center;color:#fff;text-shadow:0 1px 5px #000;font-family:Georgia,serif;border:1.5px solid #e8c46a;border-radius:50%;background:radial-gradient(circle at 35% 28%,rgba(115,107,83,.38),rgba(12,17,31,.84) 67%,rgba(4,8,17,.9));box-shadow:inset 0 0 12px rgba(232,196,106,.17),0 4px 14px #0009;cursor:pointer;padding:0;margin:0;transition:transform .1s ease,opacity .28s ease,filter .18s ease,box-shadow .18s ease;overflow:visible}
+.touch-button:focus-visible,.mini-button:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.touch-button.pressed{transform:scale(.92);filter:brightness(1.65);box-shadow:inset 0 0 20px #fff6,0 0 22px #e8c46a99}
+.touch-button.pressed:after{content:'';position:absolute;inset:-7px;border:2px solid #fff9;border-radius:50%;animation:tap-ring .36s ease-out forwards;pointer-events:none}
+@keyframes tap-ring{from{transform:scale(.76);opacity:.9}to{transform:scale(1.16);opacity:0}}
+#touch-ui.idle .touch-button{opacity:.62}#touch-ui.idle .mini-button{opacity:.78}#touch-ui .touch-button:hover{filter:brightness(1.2)}
+#miniMapButton{left:calc(var(--safe-left) + 9px);top:calc(var(--safe-top) + 8px);width:120px;height:120px;border-width:2px;background:radial-gradient(circle,#101726,#070b15 75%);box-shadow:inset 0 0 18px #e8c46a22,0 4px 18px #000b;overflow:hidden}
+#miniMap{width:100%;height:100%;display:block;border-radius:50%}.map-north{position:absolute;top:7px;left:0;right:0;font:bold 9px Georgia;color:#e8c46a;text-shadow:0 1px 4px #000;pointer-events:none}
+#mobileStats{position:absolute;left:calc(var(--safe-left) + 12px);top:calc(var(--safe-top) + 132px);width:154px;padding:5px 7px;border:1px solid #e8c46a70;border-radius:7px;background:linear-gradient(120deg,#070b18df,#080d18a8);box-shadow:0 2px 9px #0008;color:#f4e6c2;font:10px Georgia;pointer-events:none}
+.stat-line{display:grid;grid-template-columns:18px 1fr 35px;align-items:center;gap:4px;height:14px}.stat-line b{text-align:right;font-size:9px;font-weight:normal}.stat-track{height:6px;background:#070912;border:1px solid #ffffff33;border-radius:5px;overflow:hidden}.stat-track i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#9a292a,#ed6860);border-radius:5px;transition:width .12s linear}.stat-line:nth-child(2) .stat-track i{background:linear-gradient(90deg,#3345a3,#9a8cff)}.xp-track i{background:linear-gradient(90deg,#92701e,#ffdc76)!important}
+#touchTools{position:absolute;right:calc(var(--safe-right) + 12px);top:calc(var(--safe-top) + 10px);display:flex;gap:7px;pointer-events:none}
+#touchTools .touch-button{position:relative;width:44px;height:44px;font-size:20px;pointer-events:auto}
+#battleControls{position:absolute;inset:0;pointer-events:none}.touch-button{pointer-events:auto}
+#joy{position:absolute;left:15%;bottom:9%;width:var(--joy-size,120px);height:var(--joy-size,120px);transform:translate(-50%,50%);pointer-events:none;opacity:.22;transition:opacity .15s ease}
+#joy.active{opacity:1;transform:translate(-50%,-50%)}.joy-ring{position:absolute;inset:0;border:2px solid #e8c46a99;border-radius:50%;background:radial-gradient(circle,rgba(46,53,64,.45),rgba(8,13,24,.5) 68%,rgba(5,9,18,.18));box-shadow:inset 0 0 22px #d6bd7425,0 0 18px #0008}
+#joyKnob{position:absolute;left:50%;top:50%;width:43%;height:43%;transform:translate(-50%,-50%);border:2px solid #f6e7ba;border-radius:50%;background:radial-gradient(circle at 34% 28%,#8190a0cc,#273345e8 64%,#121b2bea);box-shadow:inset 0 0 13px #fff3,0 2px 10px #000b;transition:transform .035s linear}
+.chev{position:absolute;color:#e8c46a9a;font:bold 14px Georgia;text-shadow:0 1px 4px #000}.chev.up{top:6px;left:calc(50% - 5px)}.chev.down{bottom:5px;left:calc(50% - 5px)}.chev.left{left:7px;top:calc(50% - 8px)}.chev.right{right:7px;top:calc(50% - 8px)}
+.attack-button{width:var(--attack-size,94px);height:var(--attack-size,94px);right:calc(var(--safe-right) + 14px);bottom:calc(var(--safe-bottom) + 12px);font-size:34px;background:radial-gradient(circle at 35% 28%,#836e43b0,#352b18e8 63%,#090d16f2);box-shadow:inset 0 0 17px #ffd76a3d,0 0 18px #e8c46a55,0 5px 14px #000b}
+.attack-button:before{content:'';position:absolute;inset:-5px;border:2px solid #e8c46a88;border-radius:50%;box-shadow:0 0 13px #e8c46a60;pointer-events:none}
+.skill-button{width:var(--skill-size,70px);height:var(--skill-size,70px);font-size:26px}.skill-icon{position:relative;z-index:1;line-height:1;text-shadow:0 0 10px currentColor}.arcane{right:calc(var(--safe-right) + 125px);bottom:calc(var(--safe-bottom) + 104px);color:#c7abff;border-color:#b89aff}.fire{right:calc(var(--safe-right) + 122px);bottom:calc(var(--safe-bottom) + 18px);color:#ffb27a;border-color:#e88a4b}.heal{right:calc(var(--safe-right) + 20px);bottom:calc(var(--safe-bottom) + 119px);color:#a6f2bd;border-color:#8be1aa}.starfall{right:calc(var(--safe-right) + 211px);bottom:calc(var(--safe-bottom) + 111px);color:#d6b5ff;border-color:#bd98ff}
+.mana-badge{position:absolute;right:-5px;bottom:-4px;z-index:3;min-width:19px;padding:2px 4px;border:1px solid #e8c46a;border-radius:10px;background:#080b14;color:#fff4cf;font:bold 9px Georgia;text-align:center;text-shadow:none}
+.lock-mark,.lock-label{display:none;position:absolute;z-index:4}.starfall.locked .lock-mark{display:block;right:4px;top:3px;font:12px Arial;text-shadow:0 1px 4px #000}.starfall.locked .skill-icon{opacity:.4}.starfall.locked .lock-label{display:block;position:absolute;left:50%;top:-24px;transform:translateX(-50%);white-space:nowrap;padding:3px 6px;border:1px solid #e8c46a88;border-radius:5px;background:#090d18e9;color:#f3e8c8;font:9px Georgia;opacity:1;transition:opacity .15s}.starfall.locked.pressed .lock-label,.starfall.locked:focus .lock-label{opacity:1}
+.dodge-button{width:56px;height:56px;right:calc(var(--safe-right) + 210px);bottom:calc(var(--safe-bottom) + 19px);font-size:24px;color:#d5efff;border-color:#a9d8e9}
+.interact-button{width:52px;height:52px;right:calc(var(--safe-right) + 286px);bottom:calc(var(--safe-bottom) + 27px);font:bold 17px Georgia;color:#ffe69e;border-color:#e8c46a;opacity:.36;filter:grayscale(.65)}.interact-button.ready{opacity:1;filter:none;box-shadow:inset 0 0 15px #ffd76a44,0 0 17px #ffd76a99}.interact-button:disabled{cursor:default}
+.utility{background:radial-gradient(circle at 35% 25%,#5b6375aa,#111727ed 70%,#080c15f5)}
+.cooldown-sweep{position:absolute;inset:0;border-radius:50%;z-index:2;pointer-events:none;background:transparent}.cooldown-count{position:absolute;z-index:4;font:bold 15px Georgia;color:#fff;text-shadow:0 1px 4px #000;pointer-events:none}.cooling{opacity:.62!important;filter:saturate(.65)}.mana-low .skill-icon{opacity:.42}.mana-fail{animation:mana-shake .28s ease-in-out 1}.mana-fail:after{border-color:#ff645c!important;box-shadow:0 0 12px #ff514f!important}@keyframes mana-shake{0%,100%{translate:0 0}25%{translate:-4px 0}75%{translate:4px 0}}
+#touchTip{display:none;position:absolute;left:50%;top:calc(var(--safe-top) + 69px);transform:translateX(-50%);max-width:min(300px,48%);padding:8px 12px;border:1px solid #e8c46a;border-radius:8px;background:#090e1dec;color:#f1e4bd;text-align:center;font:12px/1.45 Georgia;box-shadow:0 5px 20px #000b;pointer-events:auto;opacity:1;transition:opacity .5s}.dialogue #battleControls{visibility:hidden}.dialogue #touchTools{visibility:hidden}.dialogue #touchTip{display:none}
+#touch-ui.touch-tip-visible #touchTip{display:block}
+#ov.map-overlay{background:rgba(2,5,12,.94)}.map-card{width:min(1040px,96vw);max-width:1040px;padding:18px;max-height:94vh}.map-screen-canvas{display:block;width:100%;max-height:38vh;object-fit:contain;border:1px solid #e8c46a;border-radius:8px;background:#080c17;margin:10px auto}.zone-chain{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:10px 0}.zone-chip{padding:7px 4px;border:1px solid #ffffff32;border-radius:6px;background:#080d19;color:#969bad;font-size:11px}.zone-chip.here{border-color:#e8c46a;color:#ffe08a;background:#312813}.zone-chip.done{color:#91d9ae;border-color:#5c9d74}
+@media(max-width:560px){#miniMapButton{width:112px;height:112px}#mobileStats{top:calc(var(--safe-top) + 123px);width:140px}.zone-chain{grid-template-columns:1fr 1fr}.map-card{padding:14px}}
+
+#desktopMiniMapButton{display:none;left:10px;top:10px;width:124px;height:124px;border:2px solid #e8c46a;background:radial-gradient(circle,#101726,#070b15 75%);box-shadow:inset 0 0 18px #e8c46a22,0 4px 18px #000b;overflow:hidden}#desktopMiniMapCanvas{width:100%;height:100%;display:block;border-radius:50%}body.is-touch #desktopMiniMapButton{display:none!important}
 </style></head><body>
+<div id="stage">
 <canvas id="g"></canvas>
+<button id="desktopMiniMapButton" class="mini-button" type="button" aria-label="Open world map" title="Click to open the world map"><canvas id="desktopMiniMapCanvas" width="256" height="256"></canvas><span class="map-north">N</span></button>
+<div id="touch-ui" aria-label="Touch controls">
+  <button id="miniMapButton" class="mini-button" type="button" aria-label="Open world map" title="Tap to open the world map"><canvas id="miniMap" width="256" height="256"></canvas><span class="map-north">N</span></button>
+  <div id="mobileStats" aria-hidden="true"><div class="stat-line"><span>HP</span><div class="stat-track"><i id="hpFill"></i></div><b id="hpText"></b></div><div class="stat-line"><span>MP</span><div class="stat-track"><i id="mpFill"></i></div><b id="mpText"></b></div><div class="stat-line"><span>LV</span><div class="stat-track xp-track"><i id="xpFill"></i></div><b id="xpText"></b></div></div>
+  <div id="touchTools"><button class="touch-button utility" data-action="inventory" aria-label="Inventory" title="Inventory">▤</button><button class="touch-button utility" data-action="pause" aria-label="Pause or menu" title="Pause or menu">Ⅱ</button><button class="touch-button utility" data-action="settings" aria-label="Settings" title="Settings">⚙</button></div>
+  <div id="battleControls">
+    <div id="joy" class="joy-ghost" aria-hidden="true"><div class="joy-ring"><span class="chev up">⌃</span><span class="chev right">›</span><span class="chev down">⌄</span><span class="chev left">‹</span><div id="joyKnob"></div></div></div>
+    <button class="touch-button skill-button starfall" data-skill="4" aria-label="Starfall, 40 mana"><span class="skill-icon">✶</span><span class="mana-badge">40</span><span class="cooldown-sweep"></span><span class="cooldown-count"></span><span class="lock-mark">🔒</span><span class="lock-label">Not yet learned</span></button>
+    <button class="touch-button skill-button arcane" data-skill="1" aria-label="Arcane Bolt, 8 mana"><span class="skill-icon">✦</span><span class="mana-badge">8</span><span class="cooldown-sweep"></span><span class="cooldown-count"></span></button>
+    <button class="touch-button skill-button fire" data-skill="2" aria-label="Fire, 15 mana"><span class="skill-icon">♨</span><span class="mana-badge">15</span><span class="cooldown-sweep"></span><span class="cooldown-count"></span></button>
+    <button class="touch-button skill-button heal" data-skill="3" aria-label="Heal, 20 mana"><span class="skill-icon">✚</span><span class="mana-badge">20</span><span class="cooldown-sweep"></span><span class="cooldown-count"></span></button>
+    <button class="touch-button dodge-button" data-action="dodge" aria-label="Dodge or dash"><span>➤</span><span class="cooldown-sweep"></span><span class="cooldown-count"></span></button>
+    <button class="touch-button utility interact-button" data-action="interact" aria-label="Interact" title="Interact (E)">E</button>
+    <button class="touch-button attack-button" data-action="attack" aria-label="Attack" title="Hold to attack"><span>⚔</span><span class="cooldown-sweep"></span><span class="cooldown-count"></span></button>
+  </div>
+  <div id="touchTip" role="status"><b>Touch controls</b><br>Move with the left stick · hold ⚔ to attack<br>Tap or drag a spell · ➤ to dodge</div>
+</div>
+</div>
 <div id="bar" style="display:none">
 <button onclick="K('attack')" title="Attack (Space)">⚔</button><button onclick="K('dodge')" title="Dodge (Shift)">💨</button>
 <button onclick="cast(1)" title="Arcane Bolt (1)">✦</button><button onclick="cast(2)" title="Fire (2)">🔥</button><button onclick="cast(3)" title="Heal (3)">✚</button><button onclick="cast(4)" title="Starfall (4)">★</button>
@@ -35,14 +91,16 @@ button:hover{background:#2c3a6e}
 <script src="world.js"></script>
 <script src="sprites.js"></script>
 <script>
-const g=document.getElementById('g'),c=g.getContext('2d'),W=960,H=560,ov=document.getElementById('ov'),bar=document.getElementById('bar');
+const stage=document.getElementById('stage'),g=document.getElementById('g'),c=g.getContext('2d'),W=960,H=560,WORLD_W=2520,WORLD_H=760,ov=document.getElementById('ov'),bar=document.getElementById('bar'),touchUI=document.getElementById('touch-ui'),miniCanvas=document.getElementById('miniMap');
 g.width=W;g.height=H;
+const IS_TOUCH=('ontouchstart'in window)||(navigator.maxTouchPoints||0)>0||matchMedia('(pointer: coarse)').matches; if(IS_TOUCH)document.body.classList.add('is-touch');
+let fitScale=1;
 const rnd=(a,b)=>a+Math.random()*(b-a),dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),cl=(v,a,b)=>Math.max(a,Math.min(b,v));
 const sr=s=>()=>(s=(s*16807)%2147483647)/2147483647;
-function fit(){const k=Math.min(innerWidth/W,innerHeight/H);g.style.width=W*k+'px';g.style.height=H*k+'px';g.style.left=(innerWidth-W*k)/2+'px';g.style.top=(innerHeight-H*k)/2+'px'}
+function fit(){const k=Math.min(innerWidth/W,innerHeight/H);fitScale=k;const sw=W*k,sh=H*k;stage.style.width=sw+'px';stage.style.height=sh+'px';stage.style.left=(innerWidth-sw)/2+'px';stage.style.top=(innerHeight-sh)/2+'px';stage.style.setProperty('--attack-size',cl(innerWidth*.105,88,96)+'px');stage.style.setProperty('--skill-size',cl(innerWidth*.078,58,72)+'px');stage.style.setProperty('--joy-size',cl(Math.min(innerWidth,innerHeight)*.28,108,144)+'px')}
 addEventListener('resize',fit);fit();
 /* ---------- audio ---------- */
-let AC;function snd(f,d=.15,t='sine',v=.07,s=.5){try{AC=AC||new AudioContext();const o=AC.createOscillator(),q=AC.createGain(),n=AC.currentTime;o.type=t;o.frequency.setValueAtTime(f,n);o.frequency.exponentialRampToValueAtTime(Math.max(30,f*s),n+d);q.gain.setValueAtTime(v,n);q.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(q);q.connect(AC.destination);o.start();o.stop(n+d)}catch(e){}}
+let AC;function snd(f,d=.15,t='sine',v=.07,s=.5){if(soundMuted)return;try{AC=AC||new AudioContext();const o=AC.createOscillator(),q=AC.createGain(),n=AC.currentTime;o.type=t;o.frequency.setValueAtTime(f,n);o.frequency.exponentialRampToValueAtTime(Math.max(30,f*s),n+d);q.gain.setValueAtTime(v,n);q.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(q);q.connect(AC.destination);o.start();o.stop(n+d)}catch(e){}}
 function music(){if(S&&S.mode=='game'&&!S.dlg){const sc=S.combat?[220,261,311,294,220,349]:[262,330,392,440,392,330];snd(sc[S.beat++%6],S.combat?.5:1.6,'triangle',S.combat?.05:.03,1)}setTimeout(music,S&&S.combat?260:800)}
 /* ---------- data ---------- */
 const Z=AetheriaWorld.zones;
@@ -57,11 +115,11 @@ crystal:{id:'moon-crystal',n:'Moon Crystal',t:'quest',icon:'moon-crystal',rarity
 const ITEM_SLOTS=['sword','staff','shield','armor','helm','gloves','belt','pack','ring','artifact','book'];
 const GR=[1,2,4,5];
 const IT=[
-[{t:'npc',k:'wiz',x:210,y:330},{t:'npc',k:'queen',x:480,y:270},{t:'npc',k:'smith',x:690,y:340},{t:'npc',k:'cap',x:830,y:440},{t:'chest',x:50,y:530,l:'sword1'},{t:'lore',k:'bell',x:135,y:365}],
-[{t:'npc',k:'guard',x:300,y:360},{t:'npc',k:'trav',x:620,y:490},{t:'shrine',x:890,y:235},{t:'chest',x:55,y:232,l:'shield1'},{t:'lore',k:'root',x:825,y:480},{t:'chest',x:865,y:520,l:'key1'},{t:'chest',x:780,y:300,l:'gloves1'}],
-[{t:'npc',k:'pip',x:120,y:330},{t:'cry',x:300,y:270},{t:'cry',x:560,y:500},{t:'cry',x:830,y:300},{t:'mural',x:480,y:235},{t:'lockedChest',x:905,y:530,l:'art1'},{t:'lore',k:'seal',x:700,y:455}],
-[{t:'chest',x:70,y:530,l:'armor2',gold:60},{t:'shrine',x:480,y:530},{t:'lore',k:'ash',x:235,y:485},{t:'chest',x:875,y:520,l:'belt1'}],
-[{t:'lore',k:'crown',x:480,y:475},{t:'chest',x:865,y:520,l:'helm1'}]];
+[{t:'npc',k:'wiz',x:210,y:455},{t:'npc',k:'queen',x:875,y:420},{t:'npc',k:'smith',x:1390,y:500},{t:'npc',k:'cap',x:2180,y:560},{t:'chest',x:115,y:685,l:'sword1'},{t:'lore',k:'bell',x:590,y:565},{t:'chest',x:2350,y:690,l:'ether',secret:true}],
+[{t:'npc',k:'guard',x:300,y:445},{t:'npc',k:'trav',x:1320,y:625},{t:'shrine',x:2250,y:260},{t:'chest',x:90,y:285,l:'shield1'},{t:'lore',k:'root',x:1980,y:630},{t:'chest',x:2240,y:680,l:'key1'},{t:'chest',x:1580,y:320,l:'gloves1'},{t:'shrine',x:1140,y:700,secret:true}],
+[{t:'npc',k:'pip',x:210,y:445},{t:'cry',x:650,y:290},{t:'cry',x:1240,y:640},{t:'cry',x:1840,y:340},{t:'mural',x:1480,y:255},{t:'lockedChest',x:2330,y:690,l:'art1'},{t:'lore',k:'seal',x:2050,y:575},{t:'chest',x:1060,y:700,l:'ether',secret:true}],
+[{t:'chest',x:120,y:685,l:'armor2',gold:60},{t:'shrine',x:1220,y:690},{t:'lore',k:'ash',x:500,y:570},{t:'chest',x:2240,y:670,l:'belt1'},{t:'shrine',x:1720,y:270,secret:true}],
+[{t:'lore',k:'crown',x:350,y:575},{t:'chest',x:2200,y:680,l:'helm1'},{t:'chest',x:1030,y:690,l:'armor1',secret:true}]];
 const NP={
 wiz:{n:'Merlanth the Wizard',c:'#8b6cff',l:s=>s.st==0?['The stars have begun to vanish one by one. Something beneath the Fallen Castle is drinking their light.','Vyrmgrath, the old storm-dragon, is waking. His dreams poison the forest creatures and weaken the Moon Seal.','Take my Oak Staff. Find Sylwen in the forest, then follow the moon-crystal trail into the ruins.']:['The ley-lines grow brighter as the seal weakens. Keep the crystals close, and do not waste your mana.'],f:s=>{if(s.st==0){give(LOOT.staff1);s.st=1;toast('Main quest started: The Broken Moon Seal')}}},
 queen:{n:'Queen Elowen',c:'#ffd76a',l:s=>s.st<2?['My family has guarded the Moon Seal for nine generations. We mistook its silence for safety.','The forest was the first to hear the dragon stirring. Bring me proof that its heart still beats.']:s.st<5?['The moon-crystals were placed to bind Vyrmgrath, not to imprison the forest. Return them to the old seal.','The road east is open. When you reach the valley, watch the ground: the dragon marks its attacks before the fire arrives.']:['The castle bells have not rung since the seal fell. If you can hear them again, Aetheria still has a future.'],f:s=>{if(!s.done.q){s.done.q=1;s.p.gold+=50;toast('Queen’s grant: +50 gold')}}},
@@ -78,24 +136,31 @@ ash:{n:'The Ashen Waystone',c:'#ff9a63',l:['Here the First Queen learned the dra
 crown:{n:'The Crown’s Last Inscription',c:'#f1d27a',l:['The seal cannot be restored by a crown alone. The people must choose to remember one another.','Carry the crystals into the light. Let the dragon see what its long sleep could not destroy.']}};
 const QT=s=>['Find Merlanth and learn why the stars are fading.','Cleanse the Enchanted Forest ('+s.fk+'/6); speak with Sylwen.','Recover 3 moon-crystals ('+s.cr+'/3) and wake the mural.','Read the mural, then prepare for the dragon’s valley.','Cross Dragon Valley ('+s.vk+'/7); watch for warning circles.','Enter the Fallen Castle and defeat Vyrmgrath.','Aetheria is saved — tell the story.'][s.st]+(s.sq==1?'  •  Side quest: goblin marks '+Math.min(s.gk,3)+'/3':'')+'  •  Chronicle: '+(s.discoveries?s.discoveries.length:0)+'/5';
 /* ---------- biome maps ---------- */
-const DEC=AetheriaWorld.makeDecorations(W,H);
-function bg(i){return AetheriaWorld.background(i,W,H)}
-const BG=[];
+const DEC=AetheriaWorld.makeDecorations(WORLD_W,WORLD_H);
+function bg(i){return AetheriaWorld.background(i,WORLD_W,WORLD_H)}
+const BG=[],MAP_BASE=[],FOG_CACHE=[];
+const FOG_COLS=42,FOG_ROWS=13,MAP_W=640,MAP_H=200;
+let CAM={x:0,y:0},soundMuted=false,hapticsOn=true,touchHideTimer=0;
 const ITEM_IMAGE_CACHE={};
 function itemImage(name){if(!ITEM_IMAGE_CACHE[name]){const im=new Image();im.onerror=function(){if(!this.src.endsWith('.svg')){this.onerror=null;this.src='items/'+name+'.svg'}};im.src='items/'+name+'.webp';ITEM_IMAGE_CACHE[name]=im}return ITEM_IMAGE_CACHE[name]}
 function drawItemIcon(ctx,name,x,y,w,h){const im=itemImage(name);if(im.complete&&im.naturalWidth)ctx.drawImage(im,x,y,w,h)}
 /* ---------- state ---------- */
-let S=null,keys={},joy={on:0,dx:0,dy:0,cx:0,cy:0,id:null},last=0;
+let S=null,keys={},joy={on:0,dx:0,dy:0,mx:0,my:0,cx:0,cy:0,id:null,radius:0,release:0,rx:0,ry:0},last=0;
+const attackHeld=new Set(),skillTouches=new Map();
 const MH=()=>S.p.mh+(S.eq.ring?S.eq.ring.s*5:0)+(S.eq.pack?S.eq.pack.s*12:0),MM=()=>S.p.mm+(S.eq.artifact?S.eq.artifact.s*3:0)+(S.eq.book?S.eq.book.s*2:0);
 const ATK=()=>8+(S.eq.sword?S.eq.sword.s:0)+(S.eq.gloves?S.eq.gloves.s:0)+S.p.lv,MAG=()=>6+S.p.mag*3+(S.eq.staff?S.eq.staff.s*2:0)+(S.eq.book?S.eq.book.s*2:0),DEF=()=>S.p.def+(S.eq.shield?S.eq.shield.s:0)+(S.eq.armor?S.eq.armor.s:0)+(S.eq.helm?S.eq.helm.s:0)+(S.eq.belt?S.eq.belt.s:0);
-function newGame(){stopControls();S={mode:'intro',t:0,z:0,st:0,gk:0,fk:0,vk:0,cr:0,sq:0,cl:{},op:{},done:{},discoveries:[],beat:0,shake:0,combat:0,star:0,hint:20,gt:0,
+function newGame(){stopControls();S={mode:'intro',t:0,z:0,st:0,gk:0,fk:0,vk:0,cr:0,sq:0,cl:{},op:{},done:{},discoveries:[],secrets:Array.from({length:5},()=>[]),fog:Array.from({length:5},()=>new Set()),skillCD:[0,0,0,0,0],lastManaToast:-9,beat:0,shake:0,combat:0,star:0,hint:20,gt:0,uiTick:0,cameraShot:null,gateShot:null,
 p:{x:120,y:420,hp:100,mh:100,mp:60,mm:60,lv:1,xp:0,nx:40,gold:0,sp:0,mag:0,def:0,spd:0,fx:1,fy:0,cd:0,dcd:0,inv:0,dash:0,sw:0},
 inv:[],eq:{},drops:[[],[],[],[],[]],es:[],pr:[],ep:[],fx:[],tel:[],dlg:null,toast:null,boss:null,end:0,ff:[],sh:{x:-300,on:0,n:25}};
-for(let i=0;i<30;i++)S.ff.push({x:rnd(0,W),y:rnd(220,540),a:rnd(0,7)});
+FOG_CACHE.length=0;for(let z=0;z<5;z++){const fc=document.createElement('canvas');fc.width=MAP_W;fc.height=MAP_H;const fctx=fc.getContext('2d');fctx.fillStyle='rgba(3,7,18,.94)';fctx.fillRect(0,0,MAP_W,MAP_H);FOG_CACHE[z]=fc}
+for(let i=0;i<56;i++)S.ff.push({x:rnd(0,WORLD_W),y:rnd(220,WORLD_H-20),a:rnd(0,7)});
 ov.style.display='none';bar.style.display='none';enter(0,120,420)}
-function enter(z,x,y){S.z=z;S.p.x=x;S.p.y=y;S.p.moving=false;S.es=[];S.pr=[];S.ep=[];S.tel=[];S.fx=[];S.boss=null;if(!BG[z])BG[z]=bg(z);
-if(!S.cl[z]){Z[z].ft.forEach(f=>{for(let i=0;i<f[1];i++)S.es.push(mk(f[0],rnd(400,900),rnd(240,530)))});
-if(z==4&&!S.done.boss){S.boss=mk('dragon',720,270);S.boss.a=0;S.es.push(S.boss);snd(70,2,'sawtooth',.15,.5);S.shake=1.2;toast('The Ancient Dragon awakens!')}}}
+function enter(z,x,y){S.z=z;S.p.x=(z===4&&x< WORLD_W*.3&&!S.done.boss)?WORLD_W*.61:x;S.p.y=cl(y,235,WORLD_H-24);S.p.moving=false;S.es=[];S.pr=[];S.ep=[];S.tel=[];S.fx=[];S.boss=null;if(!BG[z])BG[z]=bg(z);
+if(!S.cl[z]){let serial=0;Z[z].ft.forEach(f=>{for(let i=0;i<f[1];i++){const ex=cl(390+serial*360+rnd(-90,90),300,WORLD_W-140),ey=cl(AetheriaWorld.pathY(z,ex,WORLD_W,WORLD_H)+rnd(-150,150),230,WORLD_H-25);S.es.push(mk(f[0],ex,ey));serial++}});
+if(z==4&&!S.done.boss){S.boss=mk('dragon',WORLD_W*.72,WORLD_H*.55);S.boss.a=0;S.boss.anchorX=S.boss.x;S.boss.anchorY=S.boss.y;S.es.push(S.boss);snd(70,2,'sawtooth',.15,.5);S.shake=1.2;toast('The Ancient Dragon awakens!')}}
+CAM.x=cl(S.p.x-(z===4?600:W*.18),0,WORLD_W-W);CAM.y=cl(S.p.y-H/2,0,WORLD_H-H);
+if(S.boss&&S.es.includes(S.boss))S.cameraShot={x:cl((S.p.x+S.boss.x)/2-W/2,0,WORLD_W-W),y:cl((S.p.y+S.boss.y)/2-H/2,0,WORLD_H-H),left:1.1};
+revealFog();if(IS_TOUCH)syncTouchUI()}
 function mk(t,x,y){const e=EN[t];return{t:t,x:x,y:y,hp:e.h,mh:e.h,cd:rnd(0,1),hit:0,ph:rnd(0,7)}}
 function toast(s){S.toast={s:s,l:3}}
 function give(it,qty=1){
@@ -116,12 +181,15 @@ function xp(n){const p=S.p;p.xp+=n;while(p.xp>=p.nx){p.xp-=p.nx;p.lv++;p.nx=Math
 function near(r){let b=null,d=r;S.es.forEach(e=>{const q=dist(e,S.p);if(q<d){d=q;b=e}});return b}
 function face(e){if(e){const d=Math.hypot(e.x-S.p.x,e.y-S.p.y)||1;S.p.fx=(e.x-S.p.x)/d;S.p.fy=(e.y-S.p.y)/d}}
 function K(a){if(!S||S.mode!='game'||S.dlg)return;const p=S.p;
-if(a=='attack'&&p.cd<=0){p.cd=.35;p.sw=.18;face(near(110));snd(220,.12,'square',.05,.4);S.es.forEach(e=>{const r=EN[e.t].r+52;if(dist(e,p)<r&&((e.x-p.x)*p.fx+(e.y-p.y)*p.fy>-10||e.t=='dragon'))hurt(e,ATK()+Math.round(Math.random()*3),1)});spark(p.x+p.fx*40,p.y+p.fy*40,'#fff',6,120)}
+if(a=='attack'&&p.cd<=0){p.cd=.35;p.sw=.18;const target=near(110);if(target){face(target);const step=Math.min(14,dist(target,p)*.12);p.x=cl(p.x+p.fx*step,26,WORLD_W-26);p.y=cl(p.y+p.fy*step,225,WORLD_H-18)}snd(220,.12,'square',.05,.4);S.es.forEach(e=>{const r=EN[e.t].r+52;if(dist(e,p)<r&&((e.x-p.x)*p.fx+(e.y-p.y)*p.fy>-10||e.t=='dragon'))hurt(e,ATK()+Math.round(Math.random()*3),1)});spark(p.x+p.fx*40,p.y+p.fy*40,'#fff',6,120)}
 if(a=='dodge'&&p.dcd<=0){p.dcd=1;p.dash=.2;p.inv=.3;snd(150,.2,'sine',.05,2)}}
-function cast(n){if(!S||S.mode!='game'||S.dlg)return;const p=S.p,cost=[0,8,15,20,40][n];if(n==4&&!S.star)return toast('Starfall is not yet learned');if(p.mp<cost)return toast('Not enough mana');
-p.mp-=cost;if(n<3&&n){face(near(420));const sp=n==1?420:300;S.pr.push({x:p.x,y:p.y-8,vx:p.fx*sp,vy:p.fy*sp,l:1.4,k:n,d:(n==1?MAG()+8:MAG()*1.5+10)});snd(n==1?700:300,.3,'sawtooth',.05,.3);ring(p.x,p.y,n==1?'#9a7bff':'#ff8a3a')}
+const SKILL_CD=[0,.42,.65,1.65,3.6];
+function flashMana(n){const b=document.querySelector('[data-skill="'+n+'"]');if(b){b.classList.remove('mana-fail');void b.offsetWidth;b.classList.add('mana-fail');setTimeout(()=>b.classList.remove('mana-fail'),340)}}
+function cast(n,aim){if(!S||S.mode!='game'||S.dlg)return false;const p=S.p,cost=[0,8,15,20,40][n];if(n==4&&!S.star){toast('Not yet learned');flashMana(n);return false}if(p.mp<cost){if(!Number.isFinite(S.lastManaToast)||S.t-S.lastManaToast>1.2){toast('Not enough mana');S.lastManaToast=S.t}flashMana(n);return false}if(S.skillCD[n]>0)return false;
+if(aim&&Number.isFinite(aim.x)&&Number.isFinite(aim.y)&&Math.hypot(aim.x-p.x,aim.y-p.y)>8)face(aim);else if(n<3&&n)face(near(420));p.mp-=cost;S.skillCD[n]=SKILL_CD[n];
+if(n<3&&n){const sp=n==1?420:300;S.pr.push({x:p.x,y:p.y-8,vx:p.fx*sp,vy:p.fy*sp,l:1.4,k:n,d:(n==1?MAG()+8:MAG()*1.5+10)});snd(n==1?700:300,.3,'sawtooth',.05,.3);ring(p.x,p.y,n==1?'#9a7bff':'#ff8a3a')}
 if(n==3){p.hp=Math.min(MH(),p.hp+40+MAG());ring(p.x,p.y,'#7dffb0');spark(p.x,p.y,'#7dffb0',24,90);snd(523,.6,'sine',.08,1.5)}
-if(n==4){S.es.forEach(e=>{if(dist(e,p)<150+EN[e.t].r)hurt(e,40+MAG()*2,1)});ring(p.x,p.y,'#c8a6ff',150);spark(p.x,p.y,'#e8d6ff',50,240);S.shake=.5;snd(90,.7,'sawtooth',.1,3)}}
+if(n==4){S.es.forEach(e=>{if(dist(e,p)<150+EN[e.t].r)hurt(e,40+MAG()*2,1)});ring(p.x,p.y,'#c8a6ff',150);spark(p.x,p.y,'#e8d6ff',50,240);S.shake=.5;snd(90,.7,'sawtooth',.1,3)}return true}
 function hurt(e,d,kb){if(e.t=='dragon')d=Math.round(d*.8);e.hp-=d;e.hit=.15;if(kb&&e.t!='dragon'){const a=Math.atan2(e.y-S.p.y,e.x-S.p.x);e.x+=Math.cos(a)*18;e.y+=Math.sin(a)*18}
 S.fx.push({t:'txt',x:e.x,y:e.y-EN[e.t].r,s:d,l:.8});spark(e.x,e.y,EN[e.t].c,6,100);snd(160,.1,'square',.05,.5);if(e.hp<=0)die(e)}
 function die(e){const d=EN[e.t];S.es=S.es.filter(q=>q!=e);spark(e.x,e.y,d.c,30,200);xp(d.x);S.p.gold+=d.g;S.fx.push({t:'txt',x:e.x,y:e.y-20,s:'+'+d.g+'g',l:1,c:'#ffd76a'});
@@ -130,11 +198,11 @@ else if(e.t=='wolf'&&Math.random()<.24)dropItem(LOOT.health,e.x,e.y);
 else if((e.t=='skel'||e.t=='shade')&&Math.random()<.22)dropItem(Math.random()<.55?LOOT.ether:LOOT.bomb,e.x,e.y);
 if(e.t=='knight'&&Math.random()<.2)dropItem(LOOT.helm1,e.x,e.y);
 if(S.z==1)S.fk++;if(S.z==3)S.vk++;
-if(S.st==1&&S.fk>=6){S.st=2;toast('The ancient path to the ruins opens!')}if(S.st==4&&S.vk>=7){S.st=5;toast('The road to the Fallen Castle opens!')}
+if(S.st==1&&S.fk>=6){S.st=2;toast('The ancient path to the ruins opens!');cameraGatePan()}if(S.st==4&&S.vk>=7){S.st=5;toast('The road to the Fallen Castle opens!');cameraGatePan()}
 if(e.t=='dragon'){S.done.boss=1;S.st=6;S.shake=2;S.ep=[];S.tel=[];give(LOOT.art1);snd(60,2.5,'sawtooth',.2,.3);setTimeout(win,2600);for(let i=0;i<5;i++)setTimeout(()=>spark(e.x+rnd(-70,70),e.y+rnd(-40,40),'#ffb040',40,260),i*300)}
 if(!S.es.length&&e.t!='dragon')S.cl[S.z]=1}
 function dmgP(d){const p=S.p;if(p.inv>0||S.mode!='game')return;p.hp-=Math.max(1,d-DEF());p.inv=.6;S.shake=.25;snd(110,.2,'sawtooth',.08,.5);spark(p.x,p.y,'#ff4a4a',10,120);if(p.hp<=0){S.mode='dead';S.combat=0;stopControls();bar.style.display='none';ov.style.display='flex';ov.innerHTML='<div class="card"><h2>You have fallen</h2><p>Aetheria is not lost yet. Rise again.</p><button class="big" onclick="respawn()">Rise Again</button><button onclick="newGame();intro()">Restart</button></div>'}}
-function respawn(){const p=S.p;p.hp=MH()/2;p.mp=MM();p.inv=2;S.mode='game';ov.style.display='none';bar.style.display='flex';S.cl[S.z]=S.z==4?0:S.cl[S.z];enter(S.z==4?3:S.z,60,420)}
+function respawn(){const p=S.p;p.hp=MH()/2;p.mp=MM();p.inv=2;S.mode='game';ov.style.display='none';ov.classList.remove('map-overlay');bar.style.display='flex';S.cl[S.z]=S.z==4?0:S.cl[S.z];enter(S.z==4?3:S.z,60,420);syncTouchUI()}
 /* ---------- fx ---------- */
 function spark(x,y,col,n,sp){for(let i=0;i<n;i++){const a=rnd(0,7),v=rnd(20,sp);S.fx.push({t:'p',x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:rnd(.3,.9),c:col})}}
 function ring(x,y,col,r=60){S.fx.push({t:'r',x:x,y:y,c:col,l:.5,m:r})}
@@ -143,7 +211,7 @@ function act(){
 if(!S||S.mode!='game')return;
 if(S.dlg){talkNext();return}
 const p=S.p;let b=null,d=60;
-(IT[S.z]||[]).forEach((it,i)=>{it.i=i;const q=dist(it,p);if(q<d&&!S.op[S.z+':'+i]){d=q;b=it}});
+(IT[S.z]||[]).forEach((it,i)=>{it.i=i;const q=dist(it,p),visible=!it.secret||S.secrets[S.z][i];if(visible&&q<d&&!S.op[S.z+':'+i]){d=q;b=it}});
 (S.drops[S.z]||[]).forEach(q=>{const n=dist(q,p);if(n<d){d=n;b={t:'drop',drop:q,x:q.x,y:q.y}}});
 if(!b)return;
 if(b.t=='drop'){collectDrop(b.drop);return}
@@ -161,54 +229,60 @@ if(b.t=='lockedChest'){
 if(b.t=='chest'){S.op[key]=1;if(b.l)give(LOOT[b.l]);if(b.gold){S.p.gold+=b.gold;toast('+'+b.gold+' gold')}xp(15);spark(b.x,b.y,'#ffd76a',20,120)}
 if(b.t=='shrine'){S.op[key]=1;p.hp=MH();p.mp=MM();xp(30);toast('A hidden shrine restores you (+30 xp)');ring(b.x,b.y,'#7dffb0',120)}
 if(b.t=='cry'){S.op[key]=1;S.cr++;give(LOOT.crystal);toast('Moon crystal '+S.cr+'/3');snd(880,.5,'sine',.08,1.5);spark(b.x,b.y,'#9ad0ff',25,140);if(S.cr>=3&&S.st<3){S.st=3;toast('Crystals gathered — study the mural')}}
-if(b.t=='mural'){if(S.st<3)return toast('The mural is dark. Gather the crystals first.');stopControls();S.dlg={n:'The Moon-Seal Mural',c:'#c8a6ff',l:['A dragon of storm and flame swallowed the sky.','The First Queen did not bind it with chains. She bound it with three promises remembered by her people.','Carry the crystals to the Fallen Castle. Speak Vyrmgrath’s name, then renew the seal.'],i:0,f:s=>{if(s.st==3){s.st=4;toast('The eastern pass opens: Dragon Valley')}}}}
+if(b.t=='mural'){if(S.st<3)return toast('The mural is dark. Gather the crystals first.');stopControls();S.dlg={n:'The Moon-Seal Mural',c:'#c8a6ff',l:['A dragon of storm and flame swallowed the sky.','The First Queen did not bind it with chains. She bound it with three promises remembered by her people.','Carry the crystals to the Fallen Castle. Speak Vyrmgrath’s name, then renew the seal.'],i:0,f:s=>{if(s.st==3){s.st=4;toast('The eastern pass opens: Dragon Valley');cameraGatePan()}}}}
 }
 function talkNext(){const d=S.dlg;d.i++;snd(400,.05,'sine',.04,1);if(d.i>=d.l.length){S.dlg=null;if(d.f)d.f(S)}}
 /* ---------- update ---------- */
+function cameraUpdate(dt){if(!S)return;const p=S.p;let tx=p.x+p.fx*82-W/2,ty=p.y+p.fy*26-H/2;
+if(S.boss&&S.es.includes(S.boss)){tx=(p.x+S.boss.x)/2-W/2;ty=(p.y+S.boss.y)/2-H/2}
+if(S.cameraShot){tx=S.cameraShot.x;ty=S.cameraShot.y;S.cameraShot.left-=dt;if(S.cameraShot.left<=0)S.cameraShot=null}
+else if(S.gateShot){tx=S.gateShot.x;ty=S.gateShot.y;S.gateShot.left-=dt;if(S.gateShot.left<=0)S.gateShot=null}
+tx=cl(tx,0,WORLD_W-W);ty=cl(ty,0,WORLD_H-H);const a=1-Math.exp(-8.2*dt);CAM.x+=(tx-CAM.x)*a;CAM.y+=(ty-CAM.y)*a;CAM.x=cl(CAM.x,0,WORLD_W-W);CAM.y=cl(CAM.y,0,WORLD_H-H)}
+function revealFog(){if(!S||!S.fog||!S.fog[S.z])return;const p=S.p,z=S.z,cx=Math.floor(p.x/WORLD_W*FOG_COLS),cy=Math.floor(p.y/WORLD_H*FOG_ROWS),set=S.fog[z],ctx=FOG_CACHE[z].getContext('2d');
+for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){if(dx*dx+dy*dy>6)continue;const x=cx+dx,y=cy+dy;if(x<0||x>=FOG_COLS||y<0||y>=FOG_ROWS)continue;const id=y*FOG_COLS+x;if(!set.has(id)){set.add(id);ctx.clearRect(x*MAP_W/FOG_COLS,y*MAP_H/FOG_ROWS,MAP_W/FOG_COLS+1,MAP_H/FOG_ROWS+1)}}}
+function updateSecrets(){(IT[S.z]||[]).forEach((it,i)=>{if(it.secret&&!S.secrets[S.z][i]&&dist(it,S.p)<115){S.secrets[S.z][i]=1;toast('Hidden cache discovered!');spark(it.x,it.y,'#ffd76a',16,110)}})}
+function cameraGatePan(){S.gateShot={x:cl(CAM.x+180,0,WORLD_W-W),y:cl(S.p.y-H/2,0,WORLD_H-H),left:.55}}
 function upd(dt){S.t+=dt;if(S.toast&&(S.toast.l-=dt)<0)S.toast=null;if(S.mode=='intro'){if(S.t>13)startPlay();return}if(S.mode!='game'||S.dlg)return;
-const p=S.p;S.hint-=dt;p.cd-=dt;p.dcd-=dt;p.inv-=dt;p.sw-=dt;S.gt-=dt;S.shake=Math.max(0,S.shake-dt);p.mp=Math.min(MM(),p.mp+dt*3);
-let mx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),my=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0);if(joy.on){mx=joy.dx;my=joy.dy}
-const m=Math.hypot(mx,my);p.moving=m>.1;if(m>.1){mx/=Math.max(1,m);my/=Math.max(1,m);const l=Math.hypot(mx,my)||1;p.fx=mx/l;p.fy=my/l}else{mx=my=0}
-let sp=150+p.spd*18;if(p.dash>0){p.dash-=dt;sp=460;mx=p.fx;my=p.fy}
-p.x=cl(p.x+mx*sp*dt,14,946);p.y=cl(p.y+my*sp*dt,215,545);
-DEC[S.z].forEach(d=>{if(d.r){const q=Math.hypot(p.x-d.x,p.y-d.y);if(q<d.r+8){const nx=q?(p.x-d.x)/q:1,ny=q?(p.y-d.y)/q:0;p.x=d.x+nx*(d.r+8);p.y=d.y+ny*(d.r+8)}}});
-if(p.x>932&&S.z<4){if(S.st>=GR[S.z])enter(S.z+1,26,p.y);else{p.x=926;if(S.gt<=0){S.gt=2;toast('The gate is sealed. '+QT(S))}}}
-if(p.x<12&&S.z>0)enter(S.z-1,926,p.y);
+const p=S.p;S.hint-=dt;p.cd-=dt;p.dcd-=dt;p.inv-=dt;p.sw-=dt;S.gt-=dt;S.shake=Math.max(0,S.shake-dt);p.mp=Math.min(MM(),p.mp+dt*3);for(let i=1;i<=4;i++)S.skillCD[i]=Math.max(0,S.skillCD[i]-dt);
+let mx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),my=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0),analog=0;
+if(joy.on){mx=joy.mx;my=joy.my;analog=Math.hypot(mx,my)}else if(joy.release>0){joy.release=Math.max(0,joy.release-dt);const f=Math.exp(-dt/.075);joy.rx*=f;joy.ry*=f;mx=joy.rx;my=joy.ry;analog=Math.hypot(mx,my)}
+if(attackHeld.size&&p.cd<=0)K('attack');
+const m=Math.hypot(mx,my);p.moving=m>.08;if(m>.08){if(m>1){mx/=m;my/=m}const l=Math.hypot(mx,my)||1;p.fx=mx/l;p.fy=my/l}else{mx=my=0}
+let sp=analog>0?68+132*cl(analog,0,1):150+p.spd*18;if(p.dash>0){p.dash-=dt;sp=460;mx=p.fx;my=p.fy}
+p.x=cl(p.x+mx*sp*dt,26,WORLD_W-26);p.y=cl(p.y+my*sp*dt,222,WORLD_H-18);
+DEC[S.z].forEach(d=>{if(d.r&&Math.abs(p.x-d.x)<d.r+24&&Math.abs(p.y-d.y)<d.r+24){const q=Math.hypot(p.x-d.x,p.y-d.y);if(q<d.r+8){const nx=q?(p.x-d.x)/q:1,ny=q?(p.y-d.y)/q:0;p.x=d.x+nx*(d.r+8);p.y=d.y+ny*(d.r+8)}}});
+updateSecrets();revealFog();
+if(p.x>=WORLD_W-42&&S.z<4){if(S.st>=GR[S.z])enter(S.z+1,S.z+1===4?WORLD_W*.61:58,p.y);else{p.x=WORLD_W-50;if(S.gt<=0){S.gt=2;toast('The gate is sealed. '+QT(S))}}}
+if(p.x<=32&&S.z>0)enter(S.z-1,S.z-1===4?WORLD_W*.61:WORLD_W-60,p.y);
 S.combat=S.es.some(e=>dist(e,p)<320)?1:0;
-S.es.forEach(e=>{const d=EN[e.t],dd=dist(e,p);e.hit-=dt;e.cd-=dt;e.ph+=dt;
-if(e.t=='dragon'){bossAI(e,dt);return}
-if(dd<340&&dd>d.r+8){let a=Math.atan2(p.y-e.y,p.x-e.x);if(e.t=='shade')a+=Math.sin(e.ph*4)*.7;e.x+=Math.cos(a)*d.s*dt;e.y=cl(e.y+Math.sin(a)*d.s*dt,215,545)}
-if(dd<d.r+16&&e.cd<=0){e.cd=1;dmgP(d.d)}});
-S.pr=S.pr.filter(q=>{q.x+=q.vx*dt;q.y+=q.vy*dt;q.l-=dt;S.fx.push({t:'p',x:q.x,y:q.y,vx:rnd(-20,20),vy:rnd(-20,20),l:.35,c:q.k==1?'#a58bff':'#ff9a3a'});
-for(const e of S.es)if(dist(e,q)<EN[e.t].r+8){if(q.k==2){S.es.slice().forEach(o=>{if(dist(o,q)<60)hurt(o,q.d,1)});spark(q.x,q.y,'#ff8a3a',25,180);ring(q.x,q.y,'#ff8a3a',60)}else hurt(e,q.d,1);return false}return q.l>0});
+S.es.forEach(e=>{const d=EN[e.t],dd=dist(e,p);e.hit-=dt;e.cd-=dt;e.ph+=dt;if(e.t=='dragon'){bossAI(e,dt);return}if(dd<340&&dd>d.r+8){let a=Math.atan2(p.y-e.y,p.x-e.x);if(e.t=='shade')a+=Math.sin(e.ph*4)*.7;e.x=cl(e.x+Math.cos(a)*d.s*dt,20,WORLD_W-20);e.y=cl(e.y+Math.sin(a)*d.s*dt,225,WORLD_H-20)}if(dd<d.r+16&&e.cd<=0){e.cd=1;dmgP(d.d)}});
+S.pr=S.pr.filter(q=>{q.x+=q.vx*dt;q.y+=q.vy*dt;q.l-=dt;S.fx.push({t:'p',x:q.x,y:q.y,vx:rnd(-20,20),vy:rnd(-20,20),l:.35,c:q.k==1?'#a58bff':'#ff9a3a'});for(const e of S.es)if(dist(e,q)<EN[e.t].r+8){if(q.k==2){S.es.slice().forEach(o=>{if(dist(o,q)<60)hurt(o,q.d,1)});spark(q.x,q.y,'#ff8a3a',25,180);ring(q.x,q.y,'#ff8a3a',60)}else hurt(e,q.d,1);return false}return q.l>0&&q.x>-20&&q.x<WORLD_W+20});
 S.ep=S.ep.filter(q=>{q.x+=q.vx*dt;q.y+=q.vy*dt;q.l-=dt;S.fx.push({t:'p',x:q.x,y:q.y,vx:0,vy:0,l:.3,c:'#ff6a1a'});if(dist(q,p)<16){dmgP(q.d);return false}return q.l>0});
 S.tel=S.tel.filter(t=>{t.l-=dt;if(t.l<=0){ring(t.x,t.y,'#ff5a1a',t.r);spark(t.x,t.y,'#ff8a3a',30,220);S.shake=.3;snd(80,.3,'sawtooth',.08,.4);if(dist(t,p)<t.r)dmgP(24);return false}return true});
 S.fx=S.fx.filter(f=>{f.l-=dt;if(f.t=='p'){f.x+=f.vx*dt;f.y+=f.vy*dt}else if(f.t=='txt')f.y-=30*dt;return f.l>0});
-if(S.z<4){S.sh.n-=dt;if(S.sh.n<=0){S.sh.on=1;S.sh.x=-260;S.sh.n=rnd(35,60);snd(90,1.6,'sawtooth',.06,.5)}if(S.sh.on){S.sh.x+=190*dt;if(S.sh.x>W+300)S.sh.on=0}}}
-function bossAI(e,dt){const p=S.p;e.t2=(e.t2||0)+dt;e.y=270+Math.sin(e.t2)*20;e.x=680+Math.sin(e.t2*.5)*80;const f=e.hp<e.mh/2?1.6:1;e.a+=dt*f;
+if(S.z<4){S.sh.n-=dt;if(S.sh.n<=0){S.sh.on=1;S.sh.x=-260;S.sh.n=rnd(35,60);snd(90,1.6,'sawtooth',.06,.5)}if(S.sh.on){S.sh.x+=190*dt;if(S.sh.x>WORLD_W+300)S.sh.on=0}}
+cameraUpdate(dt);revealFog();if(IS_TOUCH&&S.uiTick>0)S.uiTick-=dt}
+function bossAI(e,dt){const p=S.p;e.t2=(e.t2||0)+dt;e.y=e.anchorY+Math.sin(e.t2)*20;e.x=e.anchorX+Math.sin(e.t2*.5)*80;const f=e.hp<e.mh/2?1.6:1;e.a+=dt*f;
 if(e.a>2){e.a=0;const b=Math.atan2(p.y-e.y,p.x-e.x);for(let i=-1;i<=1;i++)S.ep.push({x:e.x-40,y:e.y+10,vx:Math.cos(b+i*.25)*230,vy:Math.sin(b+i*.25)*230,l:4,d:12});snd(200,.4,'sawtooth',.08,.3)}
-e.c2=(e.c2||0)+dt*f;if(e.c2>5){e.c2=0;for(let i=0;i<3;i++)S.tel.push({x:cl(p.x+rnd(-90,90)*i,40,920),y:cl(p.y+rnd(-60,60)*i,230,540),r:62,l:1.3});snd(70,1.2,'sawtooth',.14,.6);S.shake=.5}
+e.c2=(e.c2||0)+dt*f;if(e.c2>5){e.c2=0;for(let i=0;i<3;i++)S.tel.push({x:cl(p.x+rnd(-90,90)*i,40,WORLD_W-40),y:cl(p.y+rnd(-60,60)*i,230,WORLD_H-20),r:62,l:1.3});snd(70,1.2,'sawtooth',.14,.6);S.shake=.5}
 if(f>1){e.c3=(e.c3||0)+dt;if(e.c3>12){e.c3=0;S.es.push(mk('shade',e.x-100,e.y+80))}}}
 /* ---------- draw ---------- */
 function glow(x,y,r,col,a){const q=c.createRadialGradient(x,y,0,x,y,r);q.addColorStop(0,col+Math.round(a*255).toString(16).padStart(2,'0'));q.addColorStop(1,col+'00');c.fillStyle=q;c.fillRect(x-r,y-r,r*2,r*2)}
-function drawScene(){const z=S.z,p=S.p,t=S.t;c.drawImage(BG[z],0,0);
-if(z<2)for(let i=0;i<4;i++){const bx=(t*30+i*300)%1200-120;c.strokeStyle='#cfd8ff88';c.beginPath();c.moveTo(bx,60+i*18);c.lineTo(bx+6,66+i*18);c.lineTo(bx+12,60+i*18);c.stroke()}
-const L=[];DEC[z].forEach(d=>L.push({y:d.y,f:()=>drawDec(d)}));(IT[z]||[]).forEach((it,i)=>{if(!S.op[z+':'+i]||it.t=='npc')L.push({y:it.y,f:()=>drawIt(it,S.op[z+':'+i])})});(S.drops[z]||[]).forEach(d=>L.push({y:d.y-20,f:()=>drawLootDrop(d)}));
-S.es.forEach(e=>L.push({y:e.y,f:()=>drawEn(e)}));L.push({y:p.y,f:drawP});L.sort((a,b)=>a.y-b.y);L.forEach(o=>o.f());
-if(z<4&&S.st<GR[z]){c.fillStyle='#b8321e55';c.fillRect(948,215,12,330)}else if(z<4){glow(954,380,90,'#ffd76a',.35)}
-// lighting
-c.fillStyle='rgba(6,10,36,.28)';c.fillRect(0,0,W,H);c.globalCompositeOperation='lighter';
-DEC[z].forEach(d=>{if(d.k=='torch'||d.k=='brazier')glow(d.x,d.y-38,90+Math.sin(t*9+d.x)*8,d.k=='brazier'?'#ff6938':'#ffa040',.4);if(d.k=='vent')glow(d.x,d.y-16,54,'#ff582c',.28+Math.sin(t*6+d.x)*.12)});
-glow(p.x,p.y,110,'#8fb0ff',.18);S.pr.forEach(q=>glow(q.x,q.y,50,q.k==1?'#8a6cff':'#ff8a3a',.7));S.ep.forEach(q=>glow(q.x,q.y,40,'#ff6a1a',.6));
-(IT[z]||[]).forEach((it,i)=>{if(!S.op[z+':'+i]){if(it.t=='cry')glow(it.x,it.y,60,'#7ab8ff',.6+Math.sin(t*3)*.2);if(it.t=='shrine')glow(it.x,it.y,70,'#7dffb0',.4);if(it.t=='chest'||it.t=='lockedChest')glow(it.x,it.y,26,'#ffd76a',.15+Math.sin(t*4)*.1);if(it.t=='lore')glow(it.x,it.y-8,34,'#76caff',.2+Math.sin(t*2)*.08)}});
-if(z<3)S.ff.forEach(f=>{f.a+=.01;glow(f.x+Math.sin(f.a*2)*20,f.y+Math.cos(f.a*3)*12,10,'#d8ff7a',.5+Math.sin(f.a*5)*.4)});
-if(z==3)glow(140,60,90,'#ff5a1f',.25);
-c.globalCompositeOperation='source-over';
-for(let i=0;i<3;i++){const fx=(t*12*(i+1)+i*400)%1500-300;const q=c.createRadialGradient(fx,420+i*40,0,fx,420+i*40,300);q.addColorStop(0,'rgba(190,205,230,.12)');q.addColorStop(1,'rgba(190,205,230,0)');c.fillStyle=q;c.fillRect(0,200,W,360)}
-if(S.sh.on){c.fillStyle='rgba(0,0,0,.45)';const x=S.sh.x,y=380+Math.sin(t)*20;c.beginPath();c.moveTo(x-140,y);c.quadraticCurveTo(x-60,y-60,x,y-10);c.quadraticCurveTo(x+60,y-70,x+150,y);c.quadraticCurveTo(x+60,y-10,x+20,y+20);c.quadraticCurveTo(x,y+90,x-10,y+20);c.fill()}
-S.tel.forEach(q=>{c.strokeStyle=`rgba(255,90,30,${.4+Math.sin(S.t*20)*.3})`;c.lineWidth=3;c.beginPath();c.arc(q.x,q.y,q.r,0,7);c.stroke();c.fillStyle='rgba(255,60,20,.15)';c.fill()});
-c.globalCompositeOperation='lighter';S.fx.forEach(f=>{if(f.t=='p'){c.fillStyle=f.c;c.globalAlpha=Math.min(1,f.l*2);c.fillRect(f.x-2,f.y-2,4,4)}else if(f.t=='r'){c.globalAlpha=f.l*2;c.strokeStyle=f.c;c.lineWidth=3;const r=f.m*(1-f.l*2)+10;c.beginPath();c.arc(f.x,f.y,r,0,7);c.stroke();c.beginPath();for(let i=0;i<6;i++)c.lineTo(f.x+Math.cos(i*1.047+r/20)*r*.8,f.y+Math.sin(i*1.047+r/20)*r*.8);c.closePath();c.stroke()}});c.globalAlpha=1;c.globalCompositeOperation='source-over';
-c.font='bold 16px Georgia';c.textAlign='center';S.fx.forEach(f=>{if(f.t=='txt'){c.fillStyle=f.c||'#fff';c.globalAlpha=Math.min(1,f.l*2);c.fillText(f.s,f.x,f.y)}});c.globalAlpha=1;
+function visible(x,y,pad=100){return x>CAM.x-pad&&x<CAM.x+W+pad&&y>CAM.y-pad&&y<CAM.y+H+pad}
+function drawScene(){const z=S.z,p=S.p,t=S.t;c.drawImage(BG[z],-CAM.x,-CAM.y);AetheriaWorld.drawParallax(c,z,CAM.x,CAM.y,W,H,WORLD_W,t);
+c.save();c.translate(-CAM.x,-CAM.y);
+const L=[];DEC[z].forEach(d=>{if(visible(d.x,d.y,105))L.push({y:d.y,f:()=>drawDec(d)})});(IT[z]||[]).forEach((it,i)=>{if((!it.secret||S.secrets[z][i])&&visible(it.x,it.y,100)&&(!S.op[z+':'+i]||it.t=='npc'))L.push({y:it.y,f:()=>drawIt(it,S.op[z+':'+i])})});(S.drops[z]||[]).forEach(d=>{if(visible(d.x,d.y,80))L.push({y:d.y-20,f:()=>drawLootDrop(d)})});S.es.forEach(e=>{if(visible(e.x,e.y,EN[e.t].r+100))L.push({y:e.y,f:()=>drawEn(e)})});if(visible(p.x,p.y,100))L.push({y:p.y,f:drawP});L.sort((a,b)=>a.y-b.y);L.forEach(o=>o.f());
+if(z<4&&S.st<GR[z]){c.fillStyle='#b8321e88';c.fillRect(WORLD_W-18,225,12,WORLD_H-230)}else if(z<4){glow(WORLD_W-12,435,90,'#ffd76a',.35)}
+c.fillStyle='rgba(6,10,36,.28)';c.fillRect(CAM.x,CAM.y,W,H);c.globalCompositeOperation='lighter';
+DEC[z].forEach(d=>{if(!visible(d.x,d.y,110))return;if(d.k=='torch'||d.k=='brazier')glow(d.x,d.y-38,90+Math.sin(t*9+d.x)*8,d.k=='brazier'?'#ff6938':'#ffa040',.4);if(d.k=='vent')glow(d.x,d.y-16,54,'#ff582c',.28+Math.sin(t*6+d.x)*.12)});
+if(visible(p.x,p.y,120))glow(p.x,p.y,110,'#8fb0ff',.18);S.pr.forEach(q=>{if(visible(q.x,q.y,55))glow(q.x,q.y,50,q.k==1?'#8a6cff':'#ff8a3a',.7)});S.ep.forEach(q=>{if(visible(q.x,q.y,45))glow(q.x,q.y,40,'#ff6a1a',.6)});
+(IT[z]||[]).forEach((it,i)=>{if((it.secret&&!S.secrets[z][i])||!visible(it.x,it.y,90)||S.op[z+':'+i])return;if(it.t=='cry')glow(it.x,it.y,60,'#7ab8ff',.6+Math.sin(t*3)*.2);if(it.t=='shrine')glow(it.x,it.y,70,'#7dffb0',.4);if(it.t=='chest'||it.t=='lockedChest')glow(it.x,it.y,26,'#ffd76a',.15+Math.sin(t*4)*.1);if(it.t=='lore')glow(it.x,it.y-8,34,'#76caff',.2+Math.sin(t*2)*.08)});
+if(z<3)S.ff.forEach(f=>{if(!visible(f.x,f.y,30))return;f.a+=.01;glow(f.x+Math.sin(f.a*2)*20,f.y+Math.cos(f.a*3)*12,10,'#d8ff7a',.5+Math.sin(f.a*5)*.4)});
+if(z==3&&visible(140,60,100))glow(140,60,90,'#ff5a1f',.25);c.globalCompositeOperation='source-over';
+for(let i=0;i<3;i++){const fx=(t*12*(i+1)+i*400-CAM.x*.65)%(WORLD_W+400)-200;const q=c.createRadialGradient(fx,420+i*40,0,fx,420+i*40,300);q.addColorStop(0,'rgba(190,205,230,.12)');q.addColorStop(1,'rgba(190,205,230,0)');c.fillStyle=q;c.fillRect(CAM.x,CAM.y+200,W,Math.min(360,H-200))}
+if(S.sh.on&&visible(S.sh.x,380,180)){c.fillStyle='rgba(0,0,0,.45)';const x=S.sh.x,y=380+Math.sin(t)*20;c.beginPath();c.moveTo(x-140,y);c.quadraticCurveTo(x-60,y-60,x,y-10);c.quadraticCurveTo(x+60,y-70,x+150,y);c.quadraticCurveTo(x+60,y-10,x+20,y+20);c.quadraticCurveTo(x,y+90,x-10,y+20);c.fill()}
+S.tel.forEach(q=>{if(!visible(q.x,q.y,q.r+5))return;c.strokeStyle=`rgba(255,90,30,${.4+Math.sin(S.t*20)*.3})`;c.lineWidth=3;c.beginPath();c.arc(q.x,q.y,q.r,0,7);c.stroke();c.fillStyle='rgba(255,60,20,.15)';c.fill()});
+c.globalCompositeOperation='lighter';S.fx.forEach(f=>{if(!visible(f.x,f.y,40))return;if(f.t=='p'){c.fillStyle=f.c;c.globalAlpha=Math.min(1,f.l*2);c.fillRect(f.x-2,f.y-2,4,4)}else if(f.t=='r'){c.globalAlpha=f.l*2;c.strokeStyle=f.c;c.lineWidth=3;const r=f.m*(1-f.l*2)+10;c.beginPath();c.arc(f.x,f.y,r,0,7);c.stroke();c.beginPath();for(let i=0;i<6;i++)c.lineTo(f.x+Math.cos(i*1.047+r/20)*r*.8,f.y+Math.sin(i*1.047+r/20)*r*.8);c.closePath();c.stroke()}});c.globalAlpha=1;c.globalCompositeOperation='source-over';c.font='bold 16px Georgia';c.textAlign='center';S.fx.forEach(f=>{if(f.t=='txt'&&visible(f.x,f.y,40)){c.fillStyle=f.c||'#fff';c.globalAlpha=Math.min(1,f.l*2);c.fillText(f.s,f.x,f.y)}});c.globalAlpha=1;c.restore();
 const v=c.createRadialGradient(W/2,H/2,H*.35,W/2,H/2,H*.95);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,10,.6)');c.fillStyle=v;c.fillRect(0,0,W,H)}
 function drawDec(d){AetheriaWorld.drawDecoration(c,d,S.t)}
 function drawIt(it,used){const t=S.t;c.save();c.translate(it.x,it.y);
@@ -222,12 +296,15 @@ if(dist(it,S.p)<60&&!used){c.fillStyle='#ffd76a';c.font='bold 14px Georgia';c.te
 function drawLootDrop(d){const bob=Math.sin(S.t*4+d.phase)*3;c.save();glow(d.x,d.y-22,30,d.it.t=='quest'?'#79cfff':'#ffcc65',.28);drawItemIcon(c,d.it.icon,d.x-18,d.y-44+bob,36,36);if(dist(d,S.p)<60){c.fillStyle='#ffe08a';c.font='bold 12px Georgia';c.textAlign='center';c.fillText('[E] '+d.it.n,d.x,d.y-48+bob)}c.restore()}
 function drawEn(e){PixelCharacters.drawEnemy(c,S,e,EN[e.t])}
 function drawP(){PixelCharacters.drawHero(c,S)}
-function hud(){const p=S.p;c.textAlign='left';c.font='14px Georgia';
-const bar=(x,y,w,v,m,c1,c2,l)=>{c.fillStyle='#000c';c.fillRect(x-2,y-2,w+4,16);const q=c.createLinearGradient(x,0,x+w,0);q.addColorStop(0,c1);q.addColorStop(1,c2);c.fillStyle=q;c.fillRect(x,y,w*Math.max(0,v/m),12);c.strokeStyle='#e8c46a';c.strokeRect(x-2,y-2,w+4,16);c.fillStyle='#fff';c.font='11px Georgia';c.fillText(l,x+6,y+10)};
-bar(16,14,190,p.hp,MH(),'#8a1c1c','#e04a4a','HP '+Math.ceil(p.hp)+'/'+MH());bar(16,36,190,p.mp,MM(),'#2a3a9a','#8a6cff','Mana '+Math.floor(p.mp)+'/'+MM());bar(16,58,190,p.xp,p.nx,'#7a5a10','#ffd76a','Lv '+p.lv+'  XP');
-c.font='14px Georgia';c.fillStyle='#ffd76a';c.fillText('◆ '+p.gold+' gold'+(p.sp?'   ✦ '+p.sp+' skill pts (I)':''),16,92);
+function hud(){if(IS_TOUCH){updateTouchHud();c.textAlign='center';c.fillStyle='#080d19b8';c.fillRect(W/2-215,10,430,46);c.strokeStyle='#e8c46a88';c.strokeRect(W/2-215,10,430,46);c.fillStyle='#ffd76a';c.font='bold 13px Georgia';c.fillText(Z[S.z].n,W/2,27);c.fillStyle='#f1e4bd';c.font='11px Georgia';c.fillText(QT(S),W/2,45);
+if(S.toast){c.font='bold 15px Georgia';c.fillStyle='#000d';c.fillRect(W/2-205,66,410,29);c.fillStyle='#ffd76a';c.fillText(S.toast.s,W/2,86)}
+if(S.boss&&S.es.includes(S.boss)){c.fillStyle='#000d';c.fillRect(W/2-220,H-34,440,14);c.fillStyle='#c0301e';c.fillRect(W/2-218,H-32,436*S.boss.hp/S.boss.mh,10);c.strokeStyle='#e8c46a';c.strokeRect(W/2-220,H-34,440,14);c.fillStyle='#fff';c.font='11px Georgia';c.fillText('Vyrmgrath, the Ancient Dragon',W/2,H-40)}
+if(S.dlg){const d=S.dlg;c.fillStyle='#070b18ee';c.fillRect(65,H-172,W-130,115);c.strokeStyle='#e8c46a';c.lineWidth=2;c.strokeRect(65,H-172,W-130,115);c.textAlign='left';c.fillStyle=d.c;c.font='bold 16px Georgia';c.fillText(d.n,82,H-148);c.fillStyle='#f1e4bd';c.font='15px Georgia';wrap(d.l[d.i],82,H-123,W-164,20);c.fillStyle='#ffd76a';c.font='11px Georgia';c.textAlign='right';c.fillText('Tap / E to continue',W-82,H-72)}
+if(S.aim){const p=S.p,px=p.x-CAM.x,py=p.y-CAM.y,ax=S.aim.x,ay=S.aim.y,n=S.aim.n,range=n===1?420:n===2?300:n===3?70:150;c.save();c.strokeStyle=n===1?'#b79cffaa':n===2?'#ff995eaa':n===3?'#8cffb1aa':'#d7b0ffaa';c.lineWidth=2;c.setLineDash([8,7]);c.beginPath();c.arc(px,py,range,0,Math.PI*2);c.stroke();c.setLineDash([]);c.beginPath();c.moveTo(px,py);c.lineTo(ax,ay);c.stroke();c.fillStyle='#fff';c.beginPath();c.arc(ax,ay,7,0,7);c.fill();c.restore()}return}
+syncTouchUI();drawMiniMap();const p=S.p;c.textAlign='left';c.font='14px Georgia';const bar=(x,y,w,v,m,c1,c2,l)=>{c.fillStyle='#000c';c.fillRect(x-2,y-2,w+4,16);const q=c.createLinearGradient(x,0,x+w,0);q.addColorStop(0,c1);q.addColorStop(1,c2);c.fillStyle=q;c.fillRect(x,y,w*Math.max(0,v/m),12);c.strokeStyle='#e8c46a';c.strokeRect(x-2,y-2,w+4,16);c.fillStyle='#fff';c.font='11px Georgia';c.fillText(l,x+6,y+10)};
+bar(148,146,190,p.hp,MH(),'#8a1c1c','#e04a4a','HP '+Math.ceil(p.hp)+'/'+MH());bar(148,168,190,p.mp,MM(),'#2a3a9a','#8a6cff','Mana '+Math.floor(p.mp)+'/'+MM());bar(148,190,190,p.xp,p.nx,'#7a5a10','#ffd76a','Lv '+p.lv+'  XP');c.font='14px Georgia';c.fillStyle='#ffd76a';c.fillText('◆ '+p.gold+' gold'+(p.sp?'   ✦ '+p.sp+' skill pts (I)':''),148,224);
 c.textAlign='center';c.fillStyle='#000a';c.fillRect(W/2-250,10,500,44);c.strokeStyle='#e8c46a';c.strokeRect(W/2-250,10,500,44);c.fillStyle='#ffd76a';c.font='13px Georgia';c.fillText(Z[S.z].n,W/2,26);c.fillStyle='#f1e4bd';c.fillText(QT(S),W/2,46);
-if(S.hint>0){c.fillStyle='#000a';c.fillRect(W/2-300,H-118,600,26);c.fillStyle='#f1e4bd';c.font='13px Georgia';c.fillText('WASD/Arrows move · Space attack · Shift dodge · 1–4 spells · E interact · I inventory · M map',W/2,H-100)}
+if(S.hint>0){c.fillStyle='#000a';c.fillRect(W/2-300,H-118,600,26);c.fillStyle='#f1e4bd';c.font='13px Georgia';c.fillText('WASD/Arrows move · Space attack · Shift dodge · 1–4 spells · E interact · I inventory · M map · J chronicle',W/2,H-100)}
 if(S.toast){c.font='bold 17px Georgia';c.fillStyle='#000b';c.fillRect(W/2-260,90,520,30);c.fillStyle='#ffd76a';c.fillText(S.toast.s,W/2,111)}
 if(S.boss&&S.es.includes(S.boss)){c.fillStyle='#000c';c.fillRect(W/2-250,H-40,500,16);c.fillStyle='#c0301e';c.fillRect(W/2-248,H-38,496*S.boss.hp/S.boss.mh,12);c.strokeStyle='#e8c46a';c.strokeRect(W/2-250,H-40,500,16);c.fillStyle='#fff';c.font='12px Georgia';c.fillText('Vyrmgrath, the Ancient Dragon',W/2,H-46)}
 if(S.dlg){const d=S.dlg;c.fillStyle='#070b18ee';c.fillRect(60,H-190,W-120,130);c.strokeStyle='#e8c46a';c.lineWidth=2;c.strokeRect(60,H-190,W-120,130);c.textAlign='left';c.fillStyle=d.c;c.font='bold 17px Georgia';c.fillText(d.n,80,H-162);c.fillStyle='#f1e4bd';c.font='16px Georgia';wrap(d.l[d.i],80,H-134,W-160,22);c.fillStyle='#ffd76a';c.font='12px Georgia';c.textAlign='right';c.fillText('[E] / tap to continue',W-80,H-70)}
@@ -247,70 +324,88 @@ function frame(n){const dt=Math.min(.05,(n-last)/1000);last=n;
 if(S){upd(dt);c.save();if(S.shake>0)c.translate(rnd(-1,1)*S.shake*7,rnd(-1,1)*S.shake*7);if(S.mode=='intro')drawIntro();else{drawScene();}c.restore();if(S.mode!='intro')hud()}else{c.fillStyle='#050912';c.fillRect(0,0,W,H)}
 requestAnimationFrame(frame)}
 /* ---------- screens ---------- */
-function menu(){stopControls();S=null;bar.style.display='none';ov.style.display='flex';ov.innerHTML='<div class="card"><h1>LEGENDS<br>OF AETHERIA</h1><p>A dragon stirs beneath a kingdom of moonlit stone. Explore five realms, recover the Moon Seal, and face Vyrmgrath.</p><button class="big" onclick="newGame()">Begin the Journey</button><p style="font-size:13px;opacity:.85"><b>Desktop:</b> WASD/arrows move · Space attack/advance · Shift dodge · 1–4 spells · E interact · I inventory · M map · J chronicle · Esc close/pause<br><b>Mobile:</b> drag the left side to move; tap the right side to attack; use the round buttons.</p></div>'}
+function menu(){stopControls();S=null;bar.style.display='none';ov.classList.remove('map-overlay');ov.style.display='flex';ov.innerHTML='<div class="card"><h1>LEGENDS<br>OF AETHERIA</h1><p>A dragon stirs beneath a kingdom of moonlit stone. Explore five realms, recover the Moon Seal, and face Vyrmgrath.</p><button class="big" onclick="newGame()">Begin the Journey</button><p style="font-size:13px;opacity:.85"><b>Desktop:</b> WASD/arrows move · Space attack/advance · Shift dodge · 1–4 spells · E interact · I inventory · M map · J chronicle · Esc close/pause<br><b>Mobile:</b> floating left joystick · hold the sword to attack · tap or drag a spell · dash to dodge.</p></div>';syncTouchUI()}
 function intro(){}
-function startPlay(){S.mode='game';bar.style.display='flex';S.t=0}
+function startPlay(){S.mode='game';bar.style.display='flex';S.t=0;syncTouchUI();wakeTouchControls();touchTutorial()}
 function win(){S.mode='end';stopControls();bar.style.display='none';ov.style.display='flex';ov.innerHTML='<div class="card"><h1>VICTORY</h1><p>The Moon Seal answers. Bells ring from Aetheria as Vyrmgrath’s fire fades beneath the mountain.</p><p>Level '+S.p.lv+' · '+S.p.gold+' gold · '+S.inv.length+' treasures · '+(S.discoveries||[]).length+'/5 memories</p><button class="big" onclick="newGame()">Play Again</button></div>'}
-function pause(){if(!S||S.mode!='game')return;stopControls();S.mode='pause';bar.style.display='none';ov.style.display='flex';ov.innerHTML='<div class="card"><h2>Paused</h2><p>'+QT(S)+'</p><button class="big" onclick="resume()">Resume</button><button onclick="newGame()">Restart</button><button onclick="menu()">Main menu</button></div>'}
-function resume(){if(!S)return;stopControls();S.mode='game';ov.style.display='none';bar.style.display='flex'}
+function pause(){if(!S||S.mode!='game')return;stopControls();S.mode='pause';bar.style.display='none';ov.classList.remove('map-overlay');ov.style.display='flex';syncTouchUI();ov.innerHTML='<div class="card"><h2>Paused</h2><p>'+QT(S)+'</p><button class="big" onclick="resume()">Resume</button><button onclick="newGame()">Restart</button><button onclick="menu()">Main menu</button></div>'}
+function settings(){if(!S||!['game','settings'].includes(S.mode))return;if(S.mode==='game')stopControls();S.mode='settings';bar.style.display='none';ov.classList.remove('map-overlay');ov.style.display='flex';ov.innerHTML='<div class="card"><h2>Adventure Settings</h2><p>Sound: <b>'+(soundMuted?'Off':'On')+'</b> · Haptics: <b>'+(hapticsOn?'On':'Off')+'</b></p><button onclick="toggleSound()">Toggle sound</button><button onclick="toggleHaptics()">Toggle haptics</button><p>Desktop: WASD/arrows move · Space attack · Shift dodge · 1–4 skills · E interact · I inventory · M map · Esc close</p><button class="big" onclick="resume()">Return to adventure</button></div>'}
+function toggleSound(){soundMuted=!soundMuted;settings()}
+function toggleHaptics(){hapticsOn=!hapticsOn;settings()}
+function resume(){if(!S)return;stopControls();S.mode='game';ov.classList.remove('map-overlay');ov.style.display='none';bar.style.display='flex';syncTouchUI();wakeTouchControls()}
 function inv(){if(!S)return;if(S.mode=='inv'){resume();return}if(S.mode!='game')return;stopControls();S.mode='inv';bar.style.display='none';ov.style.display='flex';drawInv()}
 function drawInv(){const p=S.p,e=S.eq,slots=['sword','staff','shield','armor','helm','gloves','belt','pack','ring','artifact','book'];
 const equipped=slots.map(k=>{const it=e[k];return '<div class="equip-slot">'+(it?'<img class="loot-art" style="width:42px;height:42px;margin:0" src="items/'+it.icon+'.webp" onerror="this.onerror=null;this.src=\'items/'+it.icon+'.svg\'">':'<span style="font-size:24px">—</span>')+'<span><b>'+k[0].toUpperCase()+k.slice(1)+'</b><br>'+(it?it.n:'Empty')+'</span></div>'}).join('');
 const cards=S.inv.map((it,i)=>{const qty=it.qty||1,rar=(it.rarity||'Common').toLowerCase(),meta=it.use?(it.use==='heal'?'Restores '+it.power+' HP':it.use==='mana'?'Restores '+it.power+' Mana':'Deals '+it.power+' damage nearby'):ITEM_SLOTS.includes(it.t)?'+'+it.s+' '+it.t:'Quest treasure';const action=it.use?'<button onclick="useItem(\''+it.id+'\')">Use ×'+qty+'</button>':ITEM_SLOTS.includes(it.t)?'<button onclick="equipItem('+i+')">'+(e[it.t]===it?'Equipped':'Equip')+'</button>':'<small>Keep safe · ×'+qty+'</small>';return '<div class="loot-card"><img class="loot-art" alt="" src="items/'+it.icon+'.webp" onerror="this.onerror=null;this.src=\'items/'+it.icon+'.svg\'"><div class="loot-name">'+it.n+'</div><div class="loot-meta rarity-'+rar+'">'+it.rarity+' · '+meta+'</div>'+action+'</div>'}).join('')||'<p>Your pack is empty. Search chests and collect the glowing loot dropped by enemies.</p>';
 ov.innerHTML='<div class="card" style="width:min(720px,96vw);max-height:92vh"><h2>Adventurer’s Pack — Level '+p.lv+'</h2><p>ATK '+ATK()+' · MAG '+MAG()+' · DEF '+DEF()+' · HP '+MH()+' · Mana '+MM()+' · Gold '+p.gold+'</p><h2 style="font-size:16px">Equipped Gear</h2><div class="equip-grid">'+equipped+'</div><h2 style="font-size:16px;margin-top:12px">Items & Loot ('+S.inv.reduce((n,x)=>n+(x.qty||1),0)+')</h2><div class="item-grid">'+cards+'</div><h2 style="font-size:16px">Skill points: '+p.sp+'</h2>'+[['mh','Health +20'],['mm','Mana +15'],['mag','Magic +3'],['def','Defense +1'],['spd','Speed']].map(u=>'<button '+(p.sp?'':'disabled')+' onclick="up(\''+u[0]+'\')">'+u[1]+'</button>').join('')+'<p><button onclick="worldMap()">World Map (M)</button><button onclick="journal()">Chronicle (J)</button><button class="big" onclick="resume()">Close (Esc)</button></p></div>'}
-function worldMap(){if(!S)return;if(S.mode=='map'){resume();return}if(S.mode!='game'&&S.mode!='inv')return;stopControls();S.mode='map';bar.style.display='none';ov.style.display='flex';const req=[0,1,2,4,5];const rows=Z.map((z,i)=>{const open=i===0||S.st>=req[i],current=i===S.z,done=!!S.cl[i]||(i===0&&S.st>0)||(i===4&&S.done.boss),state=current?'YOU ARE HERE':done?'CLEARED':open?'OPEN':'SEALED';const color=current?'#ffe08a':done?'#83d7a4':open?'#bac9ff':'#8a8792';return '<div class="it" style="padding:7px 2px;color:'+color+'"><b>'+('0'+(i+1)).slice(-2)+' · '+z.n+'</b><span>'+state+'</span></div>'}).join('');ov.innerHTML='<div class="card" style="width:min(540px,92vw)"><h2>Roads of Aetheria</h2><p>'+QT(S)+'</p>'+rows+'<p style="font-size:13px">The eastern road opens as the main quest advances. Explore each region for its Chronicle stone.</p><button onclick="journal()">Chronicle</button><button class="big" onclick="resume()">Return to adventure</button></div>'}
+function mapBase(z){if(!MAP_BASE[z]){if(!BG[z])BG[z]=bg(z);const cv=document.createElement('canvas');cv.width=MAP_W;cv.height=MAP_H;cv.getContext('2d').drawImage(BG[z],0,0,WORLD_W,WORLD_H,0,0,MAP_W,MAP_H);MAP_BASE[z]=cv}return MAP_BASE[z]}
+function cellExplored(z,x,y){if(!S||!S.fog[z])return false;const cx=cl(Math.floor(x/WORLD_W*FOG_COLS),0,FOG_COLS-1),cy=cl(Math.floor(y/WORLD_H*FOG_ROWS),0,FOG_ROWS-1);return S.fog[z].has(cy*FOG_COLS+cx)}
+function nearestPoint(list,p){let best=null,d=1e9;list.forEach(q=>{const v=dist(q,p);if(v<d){d=v;best=q}});return best}
+function objectiveTarget(){if(!S)return null;const z=S.z,p=S.p,items=IT[z]||[],gate=(right)=>({x:right?WORLD_W-30:30,y:cl(p.y,250,WORLD_H-30),gate:true});
+if(S.st===0)return z===0?items.find(q=>q.k==='wiz'):gate(false);
+if(S.st===1){if(z===0)return gate(true);if(z===1)return S.fk<6?nearestPoint(S.es,p):(items.find(q=>q.k==='guard')||gate(true));return gate(false)}
+if(S.st===2){if(z<2)return gate(true);if(z===2){const q=items.filter((it,i)=>it.t==='cry'&&!S.op[z+':'+i]);return q.length?nearestPoint(q,p):(items.find(it=>it.k==='pip')||gate(true))}return gate(false)}
+if(S.st===3){if(z===2)return items.find(it=>it.t==='mural')||gate(true);return z<2?gate(true):gate(false)}
+if(S.st===4){if(z<3)return gate(true);if(z===3)return S.vk<7?nearestPoint(S.es,p):gate(true);return gate(false)}
+if(S.st===5){if(z===4)return S.boss||items.find(it=>it.t==='lore')||gate(true);return gate(true)}
+if(z===0)return items.find(it=>it.k==='queen')||gate(false);return gate(false)}
+function mapPoint(ctx,x,y,color,r,shape){ctx.save();ctx.translate(x,y);ctx.fillStyle=color;if(shape==='arrow'){ctx.beginPath();ctx.moveTo(0,-r);ctx.lineTo(r*.72,r*.7);ctx.lineTo(0,r*.34);ctx.lineTo(-r*.72,r*.7);ctx.closePath();ctx.fill()}else if(shape==='diamond'){ctx.rotate(Math.PI/4);ctx.fillRect(-r*.65,-r*.65,r*1.3,r*1.3)}else{ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fill()}ctx.restore()}
+function drawMiniMap(){const mapCanvas=IS_TOUCH?miniCanvas:document.getElementById('desktopMiniMapCanvas');if(!S||!mapCanvas)return;const q=mapCanvas.getContext('2d'),d=256,cx=128,cy=128,r=118,p=S.p,z=S.z,spanX=900,spanY=700,srcW=spanX/WORLD_W*MAP_W,srcH=spanY/WORLD_H*MAP_H,sx=cl(p.x/WORLD_W*MAP_W-srcW/2,0,MAP_W-srcW),sy=cl(p.y/WORLD_H*MAP_H-srcH/2,0,MAP_H-srcH),pad=10,size=236,base=mapBase(z);
+q.clearRect(0,0,d,d);q.save();q.beginPath();q.arc(cx,cy,r,0,Math.PI*2);q.clip();q.fillStyle='#080d17';q.fillRect(0,0,d,d);q.drawImage(base,sx,sy,srcW,srcH,pad,pad,size,size);q.drawImage(FOG_CACHE[z],sx,sy,srcW,srcH,pad,pad,size,size);
+const pos=(x,y)=>({x:pad+(x/WORLD_W*MAP_W-sx)/srcW*size,y:pad+(y/WORLD_H*MAP_H-sy)/srcH*size});
+(IT[z]||[]).forEach((it,i)=>{if(S.op[z+':'+i]||(it.secret&&!S.secrets[z][i])||!cellExplored(z,it.x,it.y))return;const xy=pos(it.x,it.y);if(xy.x<pad||xy.x>pad+size||xy.y<pad||xy.y>pad+size)return;let col=null,rad=3;if(it.t==='npc')col='#65b9ff';else if(it.t==='cry'||it.t==='chest'||it.t==='lockedChest')col='#ffd35f';else if(it.t==='shrine'){col='#79e6a0';rad=4}if(col)mapPoint(q,xy.x,xy.y,col,rad,it.t==='cry'?'diamond':'dot')});
+S.es.forEach(e=>{if(!cellExplored(z,e.x,e.y))return;const xy=pos(e.x,e.y);if(xy.x>=pad&&xy.x<=pad+size&&xy.y>=pad&&xy.y<=pad+size)mapPoint(q,xy.x,xy.y,e.t==='dragon'?'#ff443f':'#f25b58',e.t==='dragon'?7+Math.sin(S.t*5)*2:3,'dot')});
+[{x:0,y:p.y,left:true},{x:WORLD_W,y:p.y,left:false}].forEach(g=>{const xy=pos(g.x,g.y);if(xy.x>=pad&&xy.x<=pad+size)mapPoint(q,xy.x,cl(xy.y,pad+5,pad+size-5),'#fff2c8',5,'arrow');else{const xx=g.left?pad+5:pad+size-5;mapPoint(q,cl(xx,cx-r+7,cx+r-7),cy,'#fff2c8',5,'arrow')}});
+const target=objectiveTarget();if(target){const xy=pos(target.x,target.y),dx=(target.x-p.x)/spanX,dy=(target.y-p.y)/spanY,len=Math.hypot(dx,dy);if(xy.x>pad+8&&xy.x<pad+size-8&&xy.y>pad+8&&xy.y<pad+size-8)mapPoint(q,xy.x,xy.y,'#ffdf78',5,'diamond');else if(len>.1){const rr=105,ax=cx+dx/len*rr,ay=cy+dy/len*rr;q.save();q.translate(ax,ay);q.rotate(Math.atan2(dy,dx)+Math.PI/2);q.fillStyle='#ffdf78';q.beginPath();q.moveTo(0,-9);q.lineTo(7,7);q.lineTo(0,4);q.lineTo(-7,7);q.closePath();q.fill();q.restore()}}
+const pp=pos(p.x,p.y);q.save();q.translate(pp.x,pp.y);q.rotate(Math.atan2(p.fy,p.fx)+Math.PI/2);q.fillStyle='#fff';q.shadowColor='#9cceff';q.shadowBlur=10;q.beginPath();q.moveTo(0,-8);q.lineTo(6,7);q.lineTo(0,4);q.lineTo(-6,7);q.closePath();q.fill();q.restore();q.restore();
+q.beginPath();q.arc(cx,cy,r,0,Math.PI*2);q.strokeStyle='#e8c46a';q.lineWidth=4;q.stroke();q.beginPath();q.arc(cx,cy,r-4,0,Math.PI*2);q.strokeStyle='#fff3';q.lineWidth=1;q.stroke()}
+function drawFullMap(canvas){const q=canvas.getContext('2d'),z=S.z,p=S.p,w=canvas.width,h=canvas.height;q.clearRect(0,0,w,h);q.drawImage(mapBase(z),0,0,w,h);q.drawImage(FOG_CACHE[z],0,0,w,h);const xy=(x,y)=>({x:x/WORLD_W*w,y:y/WORLD_H*h});
+(IT[z]||[]).forEach((it,i)=>{if(S.op[z+':'+i]||(it.secret&&!S.secrets[z][i])||!cellExplored(z,it.x,it.y))return;const pt=xy(it.x,it.y),col=it.t==='npc'?'#65b9ff':it.t==='shrine'?'#79e6a0':(it.t==='cry'||it.t==='chest'||it.t==='lockedChest')?'#ffd35f':null;if(col)mapPoint(q,pt.x,pt.y,col,5,it.t==='cry'?'diamond':'dot')});
+S.es.forEach(e=>{if(cellExplored(z,e.x,e.y)){const pt=xy(e.x,e.y);mapPoint(q,pt.x,pt.y,e.t==='dragon'?'#ff443f':'#f25b58',e.t==='dragon'?10+Math.sin(S.t*5)*2:5,'dot')}});
+[{x:0,y:WORLD_H*.61},{x:WORLD_W,y:WORLD_H*.61}].forEach(g=>{const pt=xy(g.x,g.y);mapPoint(q,cl(pt.x,8,w-8),pt.y,'#fff2c8',8,'arrow')});const me=xy(p.x,p.y);mapPoint(q,me.x,me.y,'#fff',7,'arrow');const target=objectiveTarget();if(target){const pt=xy(target.x,target.y);mapPoint(q,pt.x,pt.y,'#ffdf78',9,'diamond')};q.strokeStyle='#e8c46a';q.lineWidth=2;q.strokeRect(1,1,w-2,h-2)}
+function nearbyInteractable(){if(!S||S.mode!=='game'||S.dlg)return false;const p=S.p;let d=72,found=false;(IT[S.z]||[]).forEach((it,i)=>{if(S.op[S.z+':'+i]||(it.secret&&!S.secrets[S.z][i]))return;const q=dist(it,p);if(q<d){d=q;found=true}});(S.drops[S.z]||[]).forEach(it=>{if(dist(it,p)<d)found=true});return found}
+function cooldownUI(button,remaining,max){if(!button)return;const sweep=cl(remaining/Math.max(max,.01),0,1),layer=button.querySelector('.cooldown-sweep'),count=button.querySelector('.cooldown-count');if(layer)layer.style.background=sweep>0?'conic-gradient(rgba(0,0,0,.73) '+(sweep*360)+'deg, transparent 0)':'transparent';button.classList.toggle('cooling',remaining>.015);if(count)count.textContent=remaining>.08?remaining.toFixed(1):''}
+function syncTouchUI(){if(!touchUI)return;const active=!!(IS_TOUCH&&S&&S.mode==='game'),desktopMap=document.getElementById('desktopMiniMapButton');touchUI.style.display=active?'block':'none';if(desktopMap)desktopMap.style.display=(!IS_TOUCH&&S&&S.mode==='game')?'block':'none';touchUI.classList.toggle('dialogue',!!(active&&S.dlg));if(!active){touchUI.classList.remove('touch-tip-visible');return}if(S.dlg)touchUI.classList.add('dialogue');else touchUI.classList.remove('dialogue')}
+function updateTouchHud(){if(!IS_TOUCH||!S)return;syncTouchUI();if(S.mode!=='game')return;const p=S.p,put=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value},width=(id,value)=>{const el=document.getElementById(id);if(el)el.style.width=cl(value,0,100)+'%'};
+width('hpFill',p.hp/MH()*100);width('mpFill',p.mp/MM()*100);width('xpFill',p.xp/p.nx*100);put('hpText',Math.ceil(p.hp)+'/'+MH());put('mpText',Math.floor(p.mp)+'/'+MM());put('xpText','Lv '+p.lv);
+const interact=document.querySelector('[data-action="interact"]'),ready=nearbyInteractable();if(interact){interact.disabled=!ready;interact.classList.toggle('ready',ready)}
+cooldownUI(document.querySelector('[data-action="attack"]'),p.cd,.35);cooldownUI(document.querySelector('[data-action="dodge"]'),p.dcd,1);
+for(let n=1;n<=4;n++){const b=document.querySelector('[data-skill="'+n+'"]');if(!b)continue;cooldownUI(b,S.skillCD[n],SKILL_CD[n]);b.classList.toggle('locked',n===4&&!S.star);b.classList.toggle('mana-low',p.mp<[0,8,15,20,40][n])}
+drawMiniMap();const tip=document.getElementById('touchTip');if(tip&&tip.style.display==='block')touchUI.classList.add('touch-tip-visible')}
+function wakeTouchControls(){if(!IS_TOUCH||!touchUI)return;touchUI.classList.remove('idle');clearTimeout(touchHideTimer);touchHideTimer=setTimeout(()=>{if(S&&S.mode==='game'&&!S.dlg)touchUI.classList.add('idle')},3300)}
+function touchTutorial(){if(!IS_TOUCH)return;let shown=false;try{shown=sessionStorage.getItem('aetheria-touch-tutorial')==='1';if(!shown)sessionStorage.setItem('aetheria-touch-tutorial','1')}catch(e){}if(shown)return;const tip=document.getElementById('touchTip');if(!tip)return;touchUI.classList.add('touch-tip-visible');setTimeout(()=>{if(tip)touchUI.classList.remove('touch-tip-visible')},7600)}
+
+function worldMap(){if(!S)return;if(S.mode==='map'){resume();return}if(S.mode!=='game'&&S.mode!=='inv')return;stopControls();S.mode='map';bar.style.display='none';ov.classList.add('map-overlay');ov.style.display='flex';const req=[0,1,2,4,5];const rows=Z.map((z,i)=>{const open=i===0||S.st>=req[i],current=i===S.z,done=!!S.cl[i]||(i===0&&S.st>0)||(i===4&&S.done.boss),state=current?'HERE':done?'CLEARED':open?'OPEN':'SEALED',cls='zone-chip'+(current?' here':done?' done':'');return '<div class="'+cls+'"><b>'+('0'+(i+1)).slice(-2)+' · '+z.n+'</b><br>'+state+'</div>'}).join('');ov.innerHTML='<div class="card map-card"><h2>Roads of Aetheria</h2><p>'+QT(S)+'</p><canvas id="mapScreenCanvas" class="map-screen-canvas" width="1000" height="302" onclick="resume()" aria-label="Tap map to return to the adventure"></canvas><div class="zone-chain">'+rows+'</div><p style="font-size:12px">Blue: people · Red: enemies · Gold: treasure and objective · Green: shrines. Dark regions remain unexplored.</p><button onclick="journal()">Chronicle</button><button class="big" onclick="resume()">Return to adventure</button></div>';drawFullMap(document.getElementById('mapScreenCanvas'))}
 function journal(){if(!S)return;if(!['game','inv','map','journal'].includes(S.mode))return;if(S.mode=='journal'){resume();return}stopControls();S.mode='journal';bar.style.display='none';ov.style.display='flex';const found=S.discoveries||[];const entries=Object.keys(LORE).map(k=>'<div class="it"><span>'+LORE[k].n+'</span><span>'+(found.includes(k)?'REMEMBERED':'UNDISCOVERED')+'</span></div>').join('');ov.innerHTML='<div class="card" style="width:min(540px,92vw)"><h2>Chronicle of the Moon Seal</h2><p><b>Current chapter:</b> '+QT(S)+'</p>'+entries+'<p>Memories found: '+found.length+'/5. Discover all five to recover the Moon Pendant.</p><button onclick="worldMap()">World Map</button><button class="big" onclick="resume()">Return to adventure</button></div>'}
 function up(k){const p=S.p;if(!p.sp)return;p.sp--;if(k=='mh'){p.mh+=20;p.hp+=20}else if(k=='mm')p.mm+=15;else p[k]++;drawInv()}
-/* ---------- input ---------- */
+/* ---------- controls: keyboard, joystick, multi-pointer touch HUD ---------- */
 function stopControls(){
-  if(joy.on&&joy.id!=null){try{g.releasePointerCapture(joy.id)}catch(e){}}
-  joy={on:0,dx:0,dy:0,cx:0,cy:0,id:null};
+  if(joy.on&&joy.id!=null){try{stage.releasePointerCapture(joy.id)}catch(e){}}
+  joy={on:0,dx:0,dy:0,mx:0,my:0,cx:0,cy:0,id:null,radius:0,release:0,rx:0,ry:0};for(const id of attackHeld){const b=document.querySelector('.attack-button');if(b)try{b.releasePointerCapture(id)}catch(e){}}for(const [id,q] of skillTouches){try{q.button.releasePointerCapture(id)}catch(e){}}attackHeld.clear();skillTouches.clear();if(S&&S.aim)S.aim=null;
   ['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].forEach(k=>keys[k]=0);
-  if(S&&S.p)S.p.moving=false;
+  document.querySelectorAll('.touch-button.pressed').forEach(b=>b.classList.remove('pressed'));
+  const j=document.getElementById('joy');if(j){j.classList.remove('active');j.style.left='15%';j.style.top='auto';j.style.bottom='9%'}const knob=document.getElementById('joyKnob');if(knob)knob.style.transform='translate(-50%,-50%)';if(S&&S.p)S.p.moving=false;
 }
 function mapScreen(){return worldMap()}
-addEventListener('keydown',e=>{
-  const k=e.key.toLowerCase();
-  if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();
-  keys[k]=1;
-  if(e.repeat)return;
-  if(S&&S.mode=='intro'&&S.t>.5)S.t=Math.max(S.t,11.5);
-  if(k==' '){if(S&&S.dlg){S.dlg.i=S.dlg.l.length-1;talkNext()}else K('attack')}
-  if(k=='shift')K('dodge');
-  if('1234'.includes(k)&&k)cast(+k);
-  if(k=='e')act();
-  if(k=='i')inv();
-  if(k=='m')worldMap();
-  if(k=='j')journal();
-  if(k=='escape'){
-    if(S&&S.dlg){S.dlg.i=S.dlg.l.length-1;talkNext();return}
-    if(S&&['pause','inv','map','journal'].includes(S.mode)){resume();return}
-    if(S&&S.mode=='game')pause();
-  }
-});
+addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();keys[k]=1;if(e.repeat)return;if(S&&S.mode=='intro'&&S.t>.5)S.t=Math.max(S.t,11.5);if(k==' '){if(S&&S.dlg){S.dlg.i=S.dlg.l.length-1;talkNext()}else K('attack')}if(k=='shift')K('dodge');if('1234'.includes(k)&&k)cast(+k);if(k=='e')act();if(k=='i')inv();if(k=='m')worldMap();if(k=='j')journal();if(k=='escape'){if(S&&S.dlg){S.dlg.i=S.dlg.l.length-1;talkNext();return}if(S&&['pause','inv','map','journal','settings'].includes(S.mode)){resume();return}if(S&&S.mode=='game')pause()}});
 addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=0});
-g.addEventListener('pointerdown',e=>{
-  if(!S)return;
-  if(S.mode=='intro'){S.t=Math.max(S.t,11.5);return}
-  if(S.mode!='game')return;
-  if(S.dlg){talkNext();return}
-  const r=g.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W,y=(e.clientY-r.top)/r.height*H;
-  if(e.pointerType=='touch'&&x<W/2){
-    if(joy.on&&joy.id!==e.pointerId)return;
-    joy={on:1,id:e.pointerId,cx:x,cy:y,dx:0,dy:0};
-    try{g.setPointerCapture(e.pointerId)}catch(err){}
-  }else if(e.pointerType!='touch'||x>=W/2){K('attack')}
-});
-g.addEventListener('pointermove',e=>{
-  if(!joy.on||e.pointerId!==joy.id)return;
-  const r=g.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W,y=(e.clientY-r.top)/r.height*H;
-  const dx=x-joy.cx,dy=y-joy.cy,len=Math.hypot(dx,dy);
-  if(len<6){joy.dx=0;joy.dy=0;return}
-  const scale=Math.min(1,len/45);joy.dx=dx/len*scale;joy.dy=dy/len*scale;
-});
-const joyEnd=e=>{if(e.pointerId===joy.id)joy={on:0,dx:0,dy:0,cx:0,cy:0,id:null}};
-g.addEventListener('pointerup',joyEnd);g.addEventListener('pointercancel',joyEnd);g.addEventListener('lostpointercapture',joyEnd);
-addEventListener('blur',stopControls);
-document.addEventListener('visibilitychange',()=>{if(document.hidden)stopControls()});
-menu();music();requestAnimationFrame(frame);
+function pointFromEvent(e){const r=stage.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}}
+function joyStart(e,pt){if(joy.on)return;const size=parseFloat(getComputedStyle(stage).getPropertyValue('--joy-size'))||120;joy={on:1,id:e.pointerId,cx:pt.x,cy:pt.y,dx:0,dy:0,mx:0,my:0,radius:size/(2*fitScale),release:0,rx:0,ry:0};const j=document.getElementById('joy');j.classList.add('active');j.classList.remove('joy-ghost');j.style.left=(pt.x/W*100)+'%';j.style.top=(pt.y/H*100)+'%';j.style.bottom='auto';try{stage.setPointerCapture(e.pointerId)}catch(err){}wakeTouchControls()}
+function joyMove(e){if(!joy.on||e.pointerId!==joy.id)return;const pt=pointFromEvent(e),dx=pt.x-joy.cx,dy=pt.y-joy.cy,len=Math.hypot(dx,dy),norm=Math.min(1,len/joy.radius),ux=len?dx/len:0,uy=len?dy/len:0,mag=norm<=.12?0:(norm-.12)/.88;joy.dx=ux*norm;joy.dy=uy*norm;joy.mx=ux*mag;joy.my=uy*mag;const knob=document.getElementById('joyKnob'),cssR=(parseFloat(getComputedStyle(stage).getPropertyValue('--joy-size'))||120)*.27;if(knob)knob.style.transform='translate(calc(-50% + '+(ux*norm*cssR)+'px),calc(-50% + '+(uy*norm*cssR)+'px))'}
+function joyEnd(e){if(!joy.on||e.pointerId!==joy.id)return;joy.on=0;joy.id=null;joy.release=.14;joy.rx=joy.mx;joy.ry=joy.my;const j=document.getElementById('joy');j.classList.remove('active');j.classList.add('joy-ghost');j.style.left='15%';j.style.top='auto';j.style.bottom='9%';const k=document.getElementById('joyKnob');if(k)k.style.transform='translate(-50%,-50%)'}
+function uiSound(){snd(880,.055,'sine',.035,1.05);if(hapticsOn&&navigator.vibrate){try{navigator.vibrate(10)}catch(e){}}}
+function controlDown(e,button){e.preventDefault();e.stopPropagation();if(!S)return;if(S.mode==='intro'){S.t=Math.max(S.t,11.5);return}if(S.mode!=='game'||S.dlg)return;wakeTouchControls();uiSound();button.classList.add('pressed');try{button.setPointerCapture(e.pointerId)}catch(err){}const id=e.pointerId;
+if(button.dataset.skill){const pt=pointFromEvent(e),rect=button.getBoundingClientRect(),session={n:+button.dataset.skill,startX:e.clientX,startY:e.clientY,x:pt.x,y:pt.y,dragged:false,rect:{left:rect.left,top:rect.top,right:rect.right,bottom:rect.bottom},button};skillTouches.set(id,session);S.aim={n:session.n,x:pt.x,y:pt.y};return}
+if(button.dataset.action==='attack'){attackHeld.add(id);K('attack')}else if(button.dataset.action==='dodge')K('dodge');else if(button.dataset.action==='interact'){if(!button.disabled)act()}else if(button.dataset.action==='inventory')inv();else if(button.dataset.action==='pause')pause();else if(button.dataset.action==='settings')settings()}
+function controlMove(e,button){const session=skillTouches.get(e.pointerId);if(!session)return;const pt=pointFromEvent(e);session.x=pt.x;session.y=pt.y;if(Math.hypot(e.clientX-session.startX,e.clientY-session.startY)>16)session.dragged=true;if(S)S.aim={n:session.n,x:pt.x,y:pt.y}}
+function controlEnd(e,button){const session=skillTouches.get(e.pointerId);if(session){skillTouches.delete(e.pointerId);if(S&&S.aim&&S.aim.n===session.n)S.aim=null;const r=session.rect,inside=e.clientX>=r.left-7&&e.clientX<=r.right+7&&e.clientY>=r.top-7&&e.clientY<=r.bottom+7;if(!session.dragged||!inside){if(S&&S.mode==='game'){const pt=pointFromEvent(e);cast(session.n,session.dragged?{x:pt.x+CAM.x,y:pt.y+CAM.y}:null)}}}
+attackHeld.delete(e.pointerId);button.classList.remove('pressed');wakeTouchControls()}
+document.querySelectorAll('.touch-button').forEach(button=>{button.addEventListener('pointerdown',e=>controlDown(e,button));button.addEventListener('pointermove',e=>controlMove(e,button));button.addEventListener('pointerup',e=>controlEnd(e,button));button.addEventListener('pointercancel',e=>controlEnd(e,button));button.addEventListener('lostpointercapture',e=>controlEnd(e,button))});
+stage.addEventListener('pointerdown',e=>{if(!S)return;if(e.target.closest('.touch-button,.mini-button,#touchTip'))return;if(S.mode==='intro'){S.t=Math.max(S.t,11.5);return}if(S.mode!=='game')return;if(S.dlg){talkNext();return}const pt=pointFromEvent(e);if(e.pointerType==='touch'&&pt.x<W*.4){e.preventDefault();joyStart(e,pt);return}if(e.pointerType==='touch'||e.pointerType==='mouse')K('attack')});
+stage.addEventListener('pointermove',joyMove);stage.addEventListener('pointerup',joyEnd);stage.addEventListener('pointercancel',joyEnd);stage.addEventListener('lostpointercapture',joyEnd);
+document.getElementById('miniMapButton').addEventListener('click',()=>{wakeTouchControls();worldMap()});document.getElementById('desktopMiniMapButton').addEventListener('click',worldMap);document.getElementById('touchTip').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();touchUI.classList.remove('touch-tip-visible')});
+ov.addEventListener('click',e=>{if(e.target===ov&&S&&S.mode==='map')resume()});
+addEventListener('blur',stopControls);document.addEventListener('visibilitychange',()=>{if(document.hidden)stopControls()});
+
+menu();fit();syncTouchUI();music();requestAnimationFrame(frame);
 </script></body></html>
