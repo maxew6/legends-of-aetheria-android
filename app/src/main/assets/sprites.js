@@ -37,17 +37,19 @@
   }
 
   function shadow(ctx, cell, width) {
-    ctx.fillStyle = 'rgba(0,0,0,.42)';
-    ctx.fillRect(-width * cell / 2, 0, width * cell, cell * 1.2);
-    ctx.fillRect(-width * cell / 3, cell * 1.1, width * cell * 2 / 3, cell * .7);
+    const rx=width*cell*.48,ry=Math.max(2,cell*.9);
+    ctx.save();ctx.fillStyle='rgba(0,0,0,.24)';ctx.beginPath();ctx.ellipse(0,cell*1.15,rx,ry,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(0,0,0,.22)';ctx.beginPath();ctx.ellipse(0,cell*1.08,rx*.67,ry*.54,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(255,221,160,.09)';ctx.fillRect(-rx*.28,cell*.92,rx*.56,Math.max(1,cell*.12));ctx.restore();
   }
 
   function drawHuman(ctx, p, x, y, o) {
     const cell = o.cell || 3;
     const moving = !!o.moving;
-    const step = moving ? (o.step & 1) : 0;
+    const phase = moving ? (o.step & 3) : 0;
     const face = o.facing || 'south';
-    const bob = moving && step ? -cell * .35 : 0;
+    const stride=[-1,0,1,0][phase], armSwing=moving?[1,0,-1,0][phase]:0;
+    const bob = moving ? [-.12,-.42,-.68,-.3][phase]*cell : Math.sin((o.time||0)*1.8)*cell*.09;
     ctx.save();
     ctx.translate(x, y);
     shadow(ctx, cell, 10);
@@ -61,8 +63,8 @@
     const dark = p.dark || PALETTE.clothDark;
     const hair = p.hair || PALETTE.hair;
     const trim = p.trim || PALETTE.trim;
-    const legsA = step ? -1 : 0;
-    const legsB = step ? 1 : 0;
+    const legsA = stride;
+    const legsB = -stride;
 
     // Back cape / cloak silhouette.
     if (p.cape || face === 'north') {
@@ -86,16 +88,20 @@
     // Torso, shoulders and sleeves, built as stepped pixel blocks.
     rect(ctx, -5, -13, 10, 9, O);
     rect(ctx, -4, -12, 8, 7, coat);
-    rect(ctx, -6, -12, 3, 6, O);
-    rect(ctx, -5, -11, 2, 4, p.sleeve || light);
-    rect(ctx, 3, -12, 3, 6, O);
-    rect(ctx, 4, -11, 2, 4, p.sleeve || light);
+    rect(ctx, -6-armSwing, -12, 3, 6, O);
+    rect(ctx, -5-armSwing, -11, 2, 4, p.sleeve || light);
+    rect(ctx, 3+armSwing, -12, 3, 6, O);
+    rect(ctx, 4+armSwing, -11, 2, 4, p.sleeve || light);
+    rect(ctx,-5-armSwing,-12,1,2,p.sleeveLight||light);
+    rect(ctx,4+armSwing,-12,1,2,p.sleeveLight||light);
     rect(ctx, -4, -6, 8, 2, O);
     rect(ctx, -3, -6, 6, 1, p.belt || PALETTE.leather);
     rect(ctx, -1, -6, 2, 1, trim);
     rect(ctx, -3, -11, 2, 3, light);
     rect(ctx, 1, -11, 2, 3, dark);
     rect(ctx, -1, -10, 2, 2, p.emblem || trim);
+    rect(ctx,-3,-9,1,2,p.dark||dark);rect(ctx,2,-9,1,2,p.light||light);
+    rect(ctx,-2,-8,1,1,'rgba(255,235,190,.62)');rect(ctx,1,-8,1,1,'rgba(0,0,0,.18)');
     if (p.apron) {
       rect(ctx, -3, -9, 6, 5, O);
       rect(ctx, -2, -8, 4, 4, p.apron);
@@ -106,6 +112,8 @@
       rect(ctx, -4, -12, 8, 2, p.armor);
       rect(ctx, -1, -11, 2, 5, p.armorLight || PALETTE.steelLight);
       rect(ctx, -4, -6, 8, 1, trim);
+      rect(ctx,-4,-11,1,3,'rgba(255,255,255,.24)');rect(ctx,3,-11,1,3,'rgba(0,0,0,.22)');
+      rect(ctx,-2,-9,1,1,p.armorLight||PALETTE.steelLight);rect(ctx,1,-9,1,1,p.armorLight||PALETTE.steelLight);
     }
 
     // Head, ears and face. Hair/hood/helmet silhouettes stay chunky and outlined.
@@ -166,6 +174,8 @@
         rect(ctx, -2, -16, 1, 1, p.eye || PALETTE.eye);
         rect(ctx, 1, -16, 1, 1, p.eye || PALETTE.eye);
         rect(ctx, -1, -14, 2, 1, p.cheek || PALETTE.skinLight);
+        rect(ctx,-3,-17,1,1,'rgba(255,236,200,.4)');rect(ctx,2,-17,1,1,'rgba(255,236,200,.4)');
+        rect(ctx,0,-16,1,1,'rgba(255,255,255,.32)');
       } else if (face === 'east' || face === 'west') {
         rect(ctx, -1, -16, 1, 1, p.eye || PALETTE.eye);
         rect(ctx, -1, -14, 2, 1, p.cheek || PALETTE.skinLight);
@@ -257,7 +267,7 @@
     const moving = !!p.moving || p.dash > 0;
     const profile = heroProfile(state);
     if (p.inv > 0 && Math.floor(state.t * 18) % 2) ctx.save(), ctx.globalAlpha = .48;
-    drawHuman(ctx, profile, p.x, p.y, {cell:3, facing:f, moving, step:Math.floor(state.t * 10)});
+    drawHuman(ctx, profile, p.x, p.y, {cell:3.45, facing:f, moving, step:Math.floor(state.t * 9),time:state.t});
     if (p.inv > 0 && Math.floor(state.t * 18) % 2) ctx.restore();
     if (p.sw > 0) {
       ctx.save();
@@ -272,26 +282,25 @@
     const profile = NPC[it.k] || NPC.trav;
     const facing = Math.abs(state.p.x - it.x) > 18 ? (state.p.x < it.x ? 'west' : 'east') : 'south';
     const idleStep = Math.floor(state.t * 2 + it.x) & 1;
-    drawHuman(ctx, profile, it.x, it.y, {cell:2.8, facing, moving:false, step:idleStep});
+    drawHuman(ctx, profile, it.x, it.y, {cell:3.15, facing, moving:false, step:idleStep,time:state.t+it.x*.008});
     ctx.save();
-    ctx.fillStyle = '#080b12'; ctx.font = 'bold 12px Georgia'; ctx.textAlign = 'center';
-    ctx.fillText(npcInfo.n.split(',')[0].replace('the ', ''), it.x + 1, it.y - (profile.hat === 'wizard' ? 90 : profile.hat === 'crown' ? 78 : 70));
-    ctx.fillStyle = '#f6e7c5'; ctx.fillText(npcInfo.n.split(',')[0].replace('the ', ''), it.x, it.y - (profile.hat === 'wizard' ? 91 : profile.hat === 'crown' ? 79 : 71));
+    ctx.fillStyle = '#080b12'; ctx.font = 'bold 12px Georgia'; ctx.textAlign = 'center';ctx.lineWidth=3;ctx.strokeStyle='#090d17';
+    const label=npcInfo.n.split(',')[0].replace('the ',''),labelY=it.y-(profile.hat==='wizard'?99:profile.hat==='crown'?88:82);ctx.strokeText(label,it.x,labelY);ctx.fillStyle='#fff0cc';ctx.fillText(label,it.x,labelY);
     ctx.restore();
   }
 
   function drawGoblin(ctx, state, e) {
     const p = {skin:'#84a94b',ear:'#9abd58',hair:'#455c2a',cloth:'#586d32',light:'#829749',dark:'#374325',trim:'#bd9150',boot:'#443324',ears:true,prop:'hammer',blade:'#9b7952'};
-    drawHuman(ctx,p,e.x,e.y,{cell:2.55,facing:state.p.x<e.x?'west':'east',moving:true,step:Math.floor(e.ph*8)});
+    drawHuman(ctx,p,e.x,e.y,{cell:2.85,facing:state.p.x<e.x?'west':'east',moving:true,step:Math.floor(e.ph*8),time:e.ph});
   }
 
   function drawKnight(ctx, state, e) {
     const p = {skin:'#c59a71',hair:'#5b382a',cloth:'#455468',light:'#77879b',dark:'#293442',trim:'#dcbd69',helmet:'#64758c',helmetLight:'#b1bec6',hat:'helmet',plume:'#b44135',armor:'#596a80',armorLight:'#d0d6cc',prop:'sword',blade:'#d9e5df',shield:'#626e79'};
-    drawHuman(ctx,p,e.x,e.y,{cell:2.9,facing:state.p.x<e.x?'west':'east',moving:true,step:Math.floor(e.ph*7)});
+    drawHuman(ctx,p,e.x,e.y,{cell:3.15,facing:state.p.x<e.x?'west':'east',moving:true,step:Math.floor(e.ph*7),time:e.ph});
   }
 
   function drawSkeleton(ctx, state, e) {
-    const cell=2.7, step=Math.floor(e.ph*8)&1, face=state.p.x<e.x?'west':'east';
+    const cell=2.95, step=Math.floor(e.ph*8)&3, face=state.p.x<e.x?'west':'east';
     ctx.save(); ctx.translate(e.x,e.y); shadow(ctx,cell,9); ctx.scale(face==='west'?-cell:cell,cell);
     const O=PALETTE.outline, B=PALETTE.bone, S=PALETTE.boneShade;
     rect(ctx,-4+step,-5,3,5,O); rect(ctx,-3+step,-4,1,3,B); rect(ctx,-4+step,-1,3,1,O);
@@ -306,7 +315,7 @@
   }
 
   function drawShade(ctx, state, e) {
-    const cell=2.8, bob=Math.round(Math.sin(e.ph*4)*1), face=state.p.x<e.x?'west':'east';
+    const cell=3.05, bob=Math.round(Math.sin(e.ph*4)*1.25), face=state.p.x<e.x?'west':'east';
     ctx.save(); ctx.translate(e.x,e.y); ctx.globalAlpha=.88; shadow(ctx,cell,8); ctx.translate(0,bob);
     ctx.scale(face==='west'?-cell:cell,cell);
     const O='#20172e', P='#4b3577', M='#7958b3', L='#b894e4';
@@ -319,7 +328,7 @@
   }
 
   function drawWolf(ctx, state, e) {
-    const cell=2.8, step=Math.floor(e.ph*9)&1, flip=state.p.x<e.x?-1:1;
+    const cell=3.05, step=Math.floor(e.ph*9)&3, flip=state.p.x<e.x?-1:1;
     ctx.save(); ctx.translate(e.x,e.y); shadow(ctx,cell,12); ctx.scale(flip*cell,cell);
     const O=PALETTE.outline, F='#737b82', L='#a1a7a5', D='#4b535e', R='#b9483e';
     // Tail, hindquarters and body.
@@ -337,7 +346,7 @@
   }
 
   function drawDragon(ctx, state, e) {
-    const flap=Math.round(Math.sin(state.t*3.2)*2), cell=4.5;
+    const flap=Math.round(Math.sin(state.t*3.2)*2.6), cell=4.75;
     ctx.save(); ctx.translate(e.x,e.y); ctx.scale(cell,cell);
     rect(ctx,-28,18,56,3,'rgba(0,0,0,.45)'); rect(ctx,-22,21,44,2,'rgba(0,0,0,.3)');
     const O='#251817', R='#7f211b', M='#ad3022', L='#d34a2c', H='#ee7540', B='#e2b45b';
@@ -361,6 +370,7 @@
     // Armored body and plated belly.
     rect(ctx,-15,-5,30,15,O); rect(ctx,-13,-4,26,12,R); rect(ctx,-9,-2,18,9,M); rect(ctx,-6,0,12,6,'#d98843');
     rect(ctx,-4,0,8,1,'#f1c36e'); rect(ctx,-4,3,8,1,'#f1c36e'); rect(ctx,-3,6,6,1,'#f1c36e');
+    rect(ctx,-11,-2,2,2,H);rect(ctx,9,-2,2,2,R);rect(ctx,-8,5,2,2,'#f0a24e');rect(ctx,6,5,2,2,'#f0a24e');
     rect(ctx,-12,-6,24,3,O); rect(ctx,-10,-6,20,2,L); rect(ctx,-7,-8,14,3,O); rect(ctx,-5,-8,10,2,M);
     // Head and square muzzle turn toward the advancing hero.
     rect(ctx,-20,-12,12,9,O); rect(ctx,-19,-11,10,7,R); rect(ctx,-23,-9,7,5,O); rect(ctx,-22,-8,6,3,H);
@@ -369,6 +379,9 @@
     // Jaw plates, back spikes and glint.
     rect(ctx,-15,-3,5,2,H); rect(ctx,-7,-9,3,2,H); rect(ctx,0,-10,3,2,H); rect(ctx,7,-8,3,2,H);
     rect(ctx,-3,-11,3,3,O); rect(ctx,-2,-10,1,1,'#fff0b5');
+    // Scaled brow plates and alternating glints make the face readable at phone size.
+    rect(ctx,-21,-12,3,2,'#f08a4a');rect(ctx,-20,-13,2,1,'#ffd28a');
+    rect(ctx,-15,-1,3,1,'#ed7440');rect(ctx,8,-4,2,1,'#f49a52');
     ctx.restore();
   }
 
@@ -386,12 +399,13 @@
     } else if (e.t === 'knight') {
       drawKnight(ctx,state,e);
     }
-    const width=e.t==='dragon'?54:34;
-    const barY=e.t==='dragon'?-82:-Math.max(39,stats.r*2+16);
+    const width=e.t==='dragon'?60:38;
+    const barY=e.t==='dragon'?-105:-Math.max(48,stats.r*2+25);
     ctx.save(); ctx.translate(e.x,e.y);
+    rect(ctx,-width/2-1,barY-1,width+2,7,'rgba(4,6,13,.82)');
     rect(ctx,-width/2,barY,width,5,'#151117');
-    rect(ctx,-width/2,barY,width*Math.max(0,e.hp/e.mh),3,e.hit>0?'#fff':'#d84a45');
-    rect(ctx,-width/2,barY,width,1,'#ead391');
+    const hpGrad=ctx.createLinearGradient(-width/2,barY,width/2,barY);hpGrad.addColorStop(0,e.hit>0?'#fff':'#9d2024');hpGrad.addColorStop(1,e.hit>0?'#fff':'#ff7162');ctx.fillStyle=hpGrad;ctx.fillRect(-width/2,barY,width*Math.max(0,e.hp/e.mh),4);
+    rect(ctx,-width/2,barY,width,1,'#fff0bd');rect(ctx,-width/2,barY+5,width,1,'#171116');
     ctx.restore();
   }
 

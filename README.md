@@ -2,7 +2,7 @@
 
 An Android wrapper for the **Legends of Aetheria** fantasy adventure. The game runs locally in a fullscreen landscape WebView and does not need a network connection while playing.
 
-**Current Android build:** version 1.4 (`versionCode` 5).
+**Current Android build:** version 1.5 (`versionCode` 6).
 
 ## The adventure
 
@@ -16,7 +16,11 @@ Travel through five hand-built regions, each with its own palette, terrain, land
 
 The main quest advances through story conversations, enemy-clear goals, the three crystals, and the mural. Optional adventures include Brannoch’s goblin-mark hunt and five Chronicle memory stones; finding every memory earns the Moon Pendant. Pip teaches Starfall after the crystals are gathered.
 
-Each region is now a wide, scrollable world with a camera-follow view, parallax night sky, on-screen scenery culling, persistent per-zone fog of war, and a discoverable secret. The gold-rimmed minimap and full map show explored terrain, objectives, gates, NPCs, treasure, shrines, enemies, and the dragon. The original story text, quests, enemy roster, character art, and dragon encounter are preserved.
+Each region is a wide, scrollable world with a camera-follow view, layered dusk skies, moving cloud wisps and ambient motes, richer ground texture, and upgraded landmarks. The gold-rimmed minimap and full map show explored terrain, objectives, gates, NPCs, treasure, shrines, enemies, and the dragon. The original story text, quests, enemy roster, character identities, and dragon encounter are preserved.
+
+## Visual update (1.5)
+
+The scene renderer now layers atmospheric sky gradients, shaded moon details, distant cloud banks, biome-specific ground textures, and drifting fireflies, embers, rune motes, and ash. Village trees and houses have additional canopy, bark, timber, roof, window, and light details. The pixel-art characters are slightly larger, use improved contact shadows, armor/face highlights, clearer name labels and health bars, and four-phase walking with subtle idle breathing. Combat rules, collision, quest progress, controls, and story dialogue are unchanged.
 
 ## Gear, items, and loot
 
